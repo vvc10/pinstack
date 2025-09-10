@@ -3,7 +3,25 @@
 import { useEffect, useMemo, useState, use } from "react"
 import Link from "next/link"
 import useSWR from "swr"
-import { DragDropContext, Droppable, Draggable, type DropResult } from "react-beautiful-dnd"
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
+import {
+  useSortable,
+} from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { Button } from "@/components/ui/button"
 import { AppLayout } from "@/components/layout/app-layout"
 import { BoardCollaboratorsModal } from "@/components/board/board-collaborators-modal"
@@ -42,6 +60,40 @@ type BoardResp = {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 
+function SortablePinCard({ pin, onRemove }: { pin: any, onRemove: (id: string) => void }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: pin.id })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className={`transition ${
+        isDragging ? "ring-2 ring-primary" : ""
+      }`}
+    >
+      <PinCard 
+        pin={pin} 
+        isInBoard={true}
+        onRemoveFromBoard={() => onRemove(pin.id)}
+      />
+    </div>
+  )
+}
+
 function BoardDetailPageContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, mutate } = useSWR<BoardResp>(`/api/boards/${id}`, fetcher)
@@ -59,14 +111,24 @@ function BoardDetailPageContent({ params }: { params: Promise<{ id: string }> })
     return () => window.removeEventListener("focus", handler)
   }, [mutate])
 
-  async function onDragEnd(result: DropResult) {
-    if (!result.destination) return
-    const srcIdx = result.source.index
-    const destIdx = result.destination.index
-    if (srcIdx === destIdx) return
-    const next = [...pins]
-    const [moved] = next.splice(srcIdx, 1)
-    next.splice(destIdx, 0, moved)
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  async function onDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = pins.findIndex((pin) => pin.id === active.id)
+    const newIndex = pins.findIndex((pin) => pin.id === over.id)
+    
+    if (oldIndex === -1 || newIndex === -1) return
+
+    const next = arrayMove(pins, oldIndex, newIndex)
+    
     // optimistic update
     mutate({ 
       board: { ...data!.board, pins: next },
@@ -188,45 +250,25 @@ function BoardDetailPageContent({ params }: { params: Promise<{ id: string }> })
 
         {data && pins.length > 0 && (
           data.userRole.canEdit ? (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="board-pins" direction="horizontal" isDropDisabled={false}>
-                {(provided: any) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                  >
-                    <Masonry 
-                      items={pins} 
-                      renderItem={(p) => {
-                        const idx = pins.findIndex(pin => pin.id === p.id)
-                        return (
-                          <Draggable key={p.id} draggableId={p.id} index={idx}>
-                            {(pProvided: any, snapshot: any) => (
-                              <div
-                                ref={pProvided.innerRef}
-                                {...pProvided.draggableProps}
-                                {...pProvided.dragHandleProps}
-                                className={`transition ${
-                                  snapshot.isDragging ? "ring-2 ring-primary" : ""
-                                }`}
-                              >
-                                <PinCard 
-                                  pin={p} 
-                                  isInBoard={true}
-                                  onRemoveFromBoard={() => remove(p.id)}
-                                />
-                              </div>
-                            )}
-                          </Draggable>
-                        )
-                      }} 
-                      className="mt-2" 
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={onDragEnd}
+            >
+              <SortableContext items={pins.map(p => p.id)} strategy={verticalListSortingStrategy}>
+                <Masonry 
+                  items={pins} 
+                  renderItem={(p) => (
+                    <SortablePinCard 
+                      key={p.id}
+                      pin={p} 
+                      onRemove={remove}
                     />
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                  )} 
+                  className="mt-2" 
+                />
+              </SortableContext>
+            </DndContext>
           ) : (
             <Masonry 
               items={pins} 
