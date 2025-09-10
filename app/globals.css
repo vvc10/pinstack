@@ -1,0 +1,183 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Light Mode - Minimal Indigo Theme */
+  --background: #ffffff;
+  --foreground: #111111;
+
+  --card: #ffffff;
+  --card-foreground: #111111;
+
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+
+  --primary: #4C51BF; /* Indigo */
+  --primary-foreground: #ffffff;
+
+  --secondary: #F5F5F5; /* Soft gray */
+  --secondary-foreground: #374151;
+
+  --muted: #F5F5F5; /* Soft gray */
+  --muted-foreground: #64748b;
+
+  --accent: #4C51BF; /* Indigo */
+  --accent-foreground: #ffffff;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #e2e8f0;
+  --input: #ffffff;
+  --ring: rgba(76, 81, 191, 0.3);
+
+  --chart-1: #4C51BF;
+  --chart-2: #dc2626;
+  --chart-3: #d97706;
+  --chart-4: #f59e0b;
+  --chart-5: #111111;
+
+  --radius: 0.5rem;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #4C51BF;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #dc2626;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: rgba(76, 81, 191, 0.3);
+}
+
+.dark {
+  --background: #1a1a1a; /* Dark background */
+  --foreground: #ffffff;
+
+  --card: #1a1a1a; /* Dark background */
+  --card-foreground: #ffffff;
+
+  --popover: #2a2a2a; /* Slightly lighter dark */
+  --popover-foreground: #ffffff;
+
+  --primary: #4C51BF; /* Indigo - same as light mode */
+  --primary-foreground: #ffffff;
+
+  --secondary: #2a2a2a; /* Dark soft gray */
+  --secondary-foreground: #ffffff;
+
+  --muted: #2a2a2a; /* Dark soft gray */
+  --muted-foreground: #a1a1aa;
+
+  --accent: #4C51BF; /* Indigo - same as light mode */
+  --accent-foreground: #ffffff;
+
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  --border: #2a2a2a; /* Dark soft gray */
+  --input: #2a2a2a; /* Dark soft gray */
+  --ring: rgba(76, 81, 191, 0.6);
+
+  --chart-1: #4C51BF;
+  --chart-2: #dc2626;
+  --chart-3: #d97706;
+  --chart-4: #f59e0b;
+  --chart-5: #1a1a1a;
+
+  --sidebar: #1a1a1a; /* Dark background */
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #4C51BF;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #dc2626;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #2a2a2a; /* Dark soft gray */
+  --sidebar-ring: rgba(76, 81, 191, 0.6);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Accessible focus-visible outlines for interactive controls */
+:where(a, button, [role="button"], input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Respect reduced-motion user preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.001ms;
+    scroll-behavior: auto;
+  }
+}
+
+/* Skip-to-content link styling */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 50;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+  transform: translateY(-150%);
+  transition: transform 150ms ease-in-out;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
