@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { DM_Sans } from "next/font/google"
-import { GeistMono } from "geist/font/mono"
+import { DM_Sans, DM_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
@@ -22,6 +21,13 @@ const dmSans = DM_Sans({
   variable: "--font-geist-sans",
 })
 
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  display: "swap",
+  variable: "--font-geist-mono",
+})
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans ${dmSans.variable} ${GeistMono.variable} antialiased`}>
+      <body className={`font-sans ${dmSans.variable} ${dmMono.variable} antialiased`}>
         <a href="#content" className="skip-link">
           Skip to content
         </a>

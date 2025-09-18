@@ -6,7 +6,10 @@ import { useState, createContext, useContext, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { toast } from "@/hooks/use-toast"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { toast } from "sonner"
 import { 
   Home, 
   Clock, 
@@ -75,6 +78,12 @@ export function BoardsSidebar({
   const [loading, setLoading] = useState(false)
   const [boardsExpanded, setBoardsExpanded] = useState(false)
   const { isCollapsed, setIsCollapsed } = useSidebar()
+  
+  // Suggestion modal state
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false)
+  const [suggestionType, setSuggestionType] = useState("suggestion")
+  const [suggestionDescription, setSuggestionDescription] = useState("")
+  const [submittingSuggestion, setSubmittingSuggestion] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -90,11 +99,60 @@ export function BoardsSidebar({
     })
     setLoading(false)
     if (!res.ok) {
-      toast({ title: "Failed to create board", description: "Please try again.", variant: "destructive" })
+      toast.error("Failed to create board", { description: "Please try again." })
       return
     }
     setName("")
     mutate()
+  }
+
+  function openSuggestionModal() {
+    setSuggestionType("suggestion")
+    setSuggestionDescription("")
+    setShowSuggestionModal(true)
+  }
+
+  async function submitSuggestion() {
+    if (!suggestionType || !suggestionDescription.trim()) {
+      toast.error("Please fill all fields", { description: "Select a type and provide a description." })
+      return
+    }
+    
+    setSubmittingSuggestion(true)
+    try {
+      const response = await fetch("/api/suggestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: suggestionType,
+          description: suggestionDescription.trim(),
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Failed to submit suggestion")
+      }
+
+      const result = await response.json()
+      
+      toast.success("Suggestion submitted!", { 
+        description: "Thank you for your feedback. We'll review it soon." 
+      })
+      
+      setSuggestionType("")
+      setSuggestionDescription("")
+      setShowSuggestionModal(false)
+    } catch (error) {
+      console.error("Error submitting suggestion:", error)
+      toast.error("Failed to submit suggestion", { 
+        description: error instanceof Error ? error.message : "Please try again later." 
+      })
+    } finally {
+      setSubmittingSuggestion(false)
+    }
   }
 
   const sidebarContent = (
@@ -170,6 +228,7 @@ export function BoardsSidebar({
             <Users className="h-5 w-5 flex-shrink-0" />
             {!isCollapsed && <span>Following</span>}
           </Link> */}
+{/*           
           <Link
             href="/learnings"
             className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
@@ -192,7 +251,7 @@ export function BoardsSidebar({
           >
             <SquarePlay className="h-5 w-5 flex-shrink-0" />
             {!isCollapsed && <span>Reels</span>}
-          </Link>
+          </Link> */}
 
           <Link
             href="/yourpins"
@@ -277,24 +336,73 @@ export function BoardsSidebar({
         </div>
 
         {/* Promotional Section - Stuck to bottom */}
-        {!isCollapsed && (
-          <div className="bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/20 rounded-xl p-4 mx-3 mt-4 mb-4 flex-shrink-0">
-            <div className="text-center space-y-3">
-              <div className="relative w-16 h-16 mx-auto">
-              
-              </div>
-              <div className="space-y-2">
+        {!isCollapsed ? (
+          <>
+            <div className="bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900/50 dark:to-zinc-800/50 border border-zinc-200/50 dark:border-zinc-700/50 rounded-lg p-3 mx-3 mt-4 mb-2 flex-shrink-0 hover:shadow-md transition-all duration-200">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-zinc-600 to-zinc-700 dark:from-zinc-500 dark:to-zinc-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
                 <Link 
-                  href="/business-tools" 
-                  className="text-blue-600 dark:text-blue-400 text-sm font-medium hover:underline"
+                  href="https://x.com/pankajstwt" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors duration-200"
                 >
-                  Unlock Business Tools
+                  Help Center
                 </Link>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Hurry Up! Now you can unlock our new business tools at your convenience.
-                </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
+                    Get support & guides
+                  </p>
+                </div>
               </div>
             </div>
+            
+            <div className="bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900/50 dark:to-zinc-800/50 border border-zinc-200/50 dark:border-zinc-700/50 rounded-lg p-3 mx-3 mb-4 flex-shrink-0 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={openSuggestionModal}>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-zinc-600 to-zinc-700 dark:from-zinc-500 dark:to-zinc-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-zinc-700 dark:text-zinc-300 text-sm font-medium">
+                    Suggestion
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
+                    Share ideas & feedback
+                  </p>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          // Collapsed state - show only icons
+          <div className="flex flex-col gap-2 px-2 mt-4 mb-4">
+            <Link 
+              href="https://x.com/pankajstwt" 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-10 h-10 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
+              title="Help Center"
+            >
+              <svg className="w-4 h-4 text-zinc-600 dark:text-zinc-400 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </Link>
+            
+            <button 
+              onClick={openSuggestionModal}
+              className="w-10 h-10 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
+              title="Share Suggestion"
+            >
+              <svg className="w-4 h-4 text-zinc-600 dark:text-zinc-400 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </button>
           </div>
         )}
       </div>
@@ -338,10 +446,62 @@ export function BoardsSidebar({
     )
   }
 
-  // Desktop sidebar - Fixed positioning
-  return (
-    <div className="fixed left-0 top-0 h-full bg-background border-r z-[9999]">
-      {sidebarContent}
-    </div>
-  )
+    // Desktop sidebar - Fixed positioning
+    return (
+      <>
+        <div className="fixed left-0 top-0 h-full bg-background border-r z-[9999]">
+          {sidebarContent}
+        </div>
+        
+        {/* Suggestion Modal */}
+        <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share Your Feedback</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="suggestion-type">Type</Label>
+                <Select value={suggestionType} onValueChange={setSuggestionType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="feature-request">Feature Request</SelectItem>
+                    <SelectItem value="suggestion">Suggestion</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="suggestion-description">Description</Label>
+                <Textarea
+                  id="suggestion-description"
+                  placeholder="Describe your idea or feedback..."
+                  value={suggestionDescription}
+                  onChange={(e) => setSuggestionDescription(e.target.value)}
+                  className="min-h-[100px]"
+                />
+              </div>
+              
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowSuggestionModal(false)}
+                  disabled={submittingSuggestion}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={submitSuggestion}
+                  disabled={submittingSuggestion || !suggestionType || !suggestionDescription.trim()}
+                >
+                  {submittingSuggestion ? "Submitting..." : "Submit"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
+    )
 }

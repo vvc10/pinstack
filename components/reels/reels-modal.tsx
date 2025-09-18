@@ -112,25 +112,17 @@ export function ReelsModal({ open, onOpenChange, initialIndex = 0 }: ReelsModalP
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-md w-full h-[80vh] p-0 bg-black border-0 rounded-none"
+        className="max-w-md w-full h-[80vh] p-0 bg-black border-0 rounded-3xl"
         onKeyDown={handleKeyDown}
         tabIndex={0}
       >
         <div className="relative w-full h-full flex flex-col">
           {/* Header */}
-          <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-              className="text-white hover:bg-white/20 rounded-full p-2"
-            >
-              <X className="w-5 h-5" />
-            </Button>
+          {/* <div className="absolute top-4 right-4 z-10 flex justify-end items-center">
             <div className="text-white text-sm font-medium">
               {currentIndex + 1} / {videos.length}
             </div>
-          </div>
+          </div> */}
 
           {/* Navigation Buttons */}
           {videos.length > 1 && (
@@ -213,8 +205,8 @@ export function ReelsModal({ open, onOpenChange, initialIndex = 0 }: ReelsModalP
           </div>
 
           {/* Instructions */}
-          <div className="absolute bottom-4 right-4 text-white text-xs opacity-70">
-            <p>↑↓ Navigate • Space Play/Pause • M Mute • Esc Close</p>
+          <div className="absolute bottom-4 left-4 right-4 text-white text-xs opacity-70 text-center">
+            <p className="whitespace-nowrap">↑↓ Navigate • Space Play/Pause • M Mute • Esc Close</p>
           </div>
         </div>
       </DialogContent>

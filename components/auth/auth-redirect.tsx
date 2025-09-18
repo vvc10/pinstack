@@ -11,8 +11,9 @@ interface AuthRedirectProps {
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   '/sign-in',
+  '/sign-up',
   '/auth/callback',
-  '/landing'
+  '/'
 ]
 
 export function AuthRedirect({ children }: AuthRedirectProps) {
@@ -25,9 +26,8 @@ export function AuthRedirect({ children }: AuthRedirectProps) {
 
     const isPublicRoute = PUBLIC_ROUTES.some(route => pathname.startsWith(route))
     
-    // Only redirect authenticated users away from landing page
-    // Let middleware handle unauthenticated user redirects
-    if (user && pathname === '/landing') {
+    // Redirect authenticated users away from landing (root) to home
+    if (user && pathname === '/') {
       router.push('/home')
     }
   }, [user, loading, pathname, router])

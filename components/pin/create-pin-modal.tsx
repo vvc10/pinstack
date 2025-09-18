@@ -50,6 +50,28 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    // Validate required fields
+    if (!formData.title.trim()) {
+      toast.error("Title is required")
+      return
+    }
+    if (!formData.code.trim()) {
+      toast.error("Code is required")
+      return
+    }
+    if (!formData.componentType || formData.componentType === "") {
+      toast.error("Component type is required")
+      return
+    }
+    if (!formData.tags.trim()) {
+      toast.error("Tags are required")
+      return
+    }
+    if (formData.languages.length === 0) {
+      toast.error("At least one language/stack is required")
+      return
+    }
+    
     try {
       // Parse tags from comma-separated string and add component type
       const tags = formData.tags
@@ -141,7 +163,12 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
       >
         <DialogHeader className="px-3 sm:px-6 py-3 sm:py-4 border-b">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-lg sm:text-xl font-semibold">Create a new Pin</DialogTitle>
+            <div>
+              <DialogTitle className="text-lg sm:text-xl font-semibold">Create a new Pin</DialogTitle>
+              <p className="text-xs text-muted-foreground mt-1">
+                If approved by admin, your pin will be visible to users via home or explore to maintain quality content on platform
+              </p>
+            </div>
             {/* <Button
               variant="ghost"
               size="icon"
@@ -204,6 +231,7 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
             <div className="space-y-3 sm:space-y-4 h-full flex flex-col">
               {/* Title */}
               <div className="space-y-2">
+                <Label className="text-sm font-medium">Title *</Label>
               <Input
                   placeholder="Add a title"
                 value={formData.title}
@@ -237,7 +265,8 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
 
                              {/* Component Type */}
                <div className="space-y-2">
-                                  <Select value={formData.componentType} onValueChange={(value) => handleInputChange("componentType", value)}>
+                                  <Label className="text-sm font-medium">Component Type *</Label>
+                                  <Select value={formData.componentType} onValueChange={(value) => handleInputChange("componentType", value)} required>
                    <SelectTrigger className="rounded-xl sm:rounded-2xl bg-secondary dark:bg-muted border-0 text-sm sm:text-base">
                      <SelectValue placeholder="Choose a component type" />
                 
@@ -254,7 +283,7 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
 
                              {/* Select Stack */}
                <div className="space-y-2">
-                  <Label className="text-sm font-medium">Select Stack</Label>
+                  <Label className="text-sm font-medium">Select Stack *</Label>
                   <div className="flex flex-wrap gap-2">
                     {LANGUAGES.map((lang) => {
                       const isSelected = formData.languages.includes(lang)
@@ -286,13 +315,14 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
               {/* Tagged Topics */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs sm:text-sm text-muted-foreground">Tagged topics (0)</span>
+                  <span className="text-sm font-medium">Tagged Topics *</span>
             </div>
                               <Input
                   placeholder="Search for a tag"
                   value={formData.tags}
                   onChange={(e) => handleInputChange("tags", e.target.value)}
                   className="rounded-xl sm:rounded-2xl bg-secondary dark:bg-muted border-0 text-sm sm:text-base"
+                  required
                 />
             </div>
 
@@ -300,6 +330,7 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
 
               {/* Code Field */}
               <div className="space-y-2">
+                <Label className="text-sm font-medium">Code *</Label>
                               <Textarea
                   placeholder="Paste your code here..."
                   value={formData.code}
@@ -309,22 +340,33 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
                 />
             </div>
 
-            
-
-              {/* Submit Button */}
-              <div className="pt-2 sm:pt-4">
-            <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-xl sm:rounded-2xl bg-primary hover:bg-primary/90 text-sm sm:text-base py-2 sm:py-3"
-                >
-              {loading ? "Creating..." : "Create Pin"}
-            </Button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+             </div>
+           </div>
+         </form>
+         
+         {/* Sticky Action Buttons */}
+         <div className="sticky bottom-0 left-0 right-0 bg-background border-t p-3 sm:p-6">
+           <div className="flex gap-3 justify-end">
+             <Button
+               type="button"
+               variant="outline"
+               onClick={() => onOpenChange(false)}
+               disabled={loading}
+               className="px-6 rounded-xl sm:rounded-2xl text-sm sm:text-base py-2 sm:py-3"
+             >
+               Cancel
+             </Button>
+             <Button
+               type="submit"
+               disabled={loading}
+               onClick={handleSubmit}
+               className="px-6 rounded-xl sm:rounded-2xl bg-primary hover:bg-primary/90 text-sm sm:text-base py-2 sm:py-3"
+             >
+               {loading ? "Creating..." : "Create Pin"}
+             </Button>
+           </div>
+         </div>
+        </DialogContent>
+      </Dialog>
   )
 }

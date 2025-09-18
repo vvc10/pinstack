@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -9,35 +8,26 @@ import { useAuth } from '@/contexts/auth-context'
 import { PublicRouteGuard } from '@/components/auth/auth-guard'
 import { Chrome } from 'lucide-react'
 
-function SignInForm() {
+function SignUpForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const { signInWithGoogle } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
 
-  // Check for error from callback
-  const authError = searchParams.get('error')
-  const errorMessage = authError === 'auth_callback_error'
-    ? 'Authentication failed. Please try again.'
-    : authError === 'unexpected_error'
-      ? 'An unexpected error occurred. Please try again.'
-      : null
-
-  const handleGoogleSignIn = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       setLoading(true)
       setError(null)
+      // We use the same OAuth flow; provider handles new vs existing users
       await signInWithGoogle()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to sign in with Google')
+      setError(err instanceof Error ? err.message : 'Failed to continue with Google')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div
+    <div 
       className="min-h-screen relative flex items-center justify-center p-4 bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/auth/image.png')" }}
     >
@@ -45,32 +35,32 @@ function SignInForm() {
       <div className="relative z-10 w-full max-w-md">
       <Card className="w-full backdrop-blur supports-[backdrop-filter]:bg-background/70 rounded-3xl">
       <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-foreground">Welcome to pinstack</CardTitle>
+            <CardTitle className="text-2xl font-bold text-foreground">Create your pinstack account</CardTitle>
             <CardDescription>
-              Sign in to create, save, and share your favorite code snippets
+              Continue with Google to get started
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {(error || errorMessage) && (
+            {error && (
               <Alert variant="destructive">
                 <AlertDescription>
-                  {error || errorMessage}
+                  {error}
                 </AlertDescription>
               </Alert>
             )}
 
             <Button
-              onClick={handleGoogleSignIn}
+              onClick={handleGoogleSignUp}
               disabled={loading}
               className="w-full rounded-xl cursor-pointer"
               size="lg"
             >
               <Chrome className="mr-2 h-5 w-5" />
-              {loading ? 'Signing in...' : 'Continue with Google'}
+              {loading ? 'Continuing…' : 'Continue with Google'}
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
-              By signing in, you agree to our{" "}
+              By continuing, you agree to our{" "}
               <a href="/terms" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                 Terms of Service
               </a>{" "}
@@ -86,10 +76,10 @@ function SignInForm() {
   )
 }
 
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <PublicRouteGuard>
-      <SignInForm />
+      <SignUpForm />
     </PublicRouteGuard>
   )
 }

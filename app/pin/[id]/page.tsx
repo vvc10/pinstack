@@ -521,8 +521,8 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                           </p>
                         <Button
                             size="lg"
-                            disabled
-                            className="bg-muted text-muted-foreground font-medium px-6 py-3 rounded-xl cursor-not-allowed"
+                            // disabled
+                            className="bg-muted text-muted-foreground font-medium px-6 py-3 rounded-xl"
                           >
                             Open Playground
                             </Button>

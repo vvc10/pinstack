@@ -3,13 +3,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Copy } from "lucide-react"
+import { Copy, Play } from "lucide-react"
 import { useState } from "react"
 import type { Pin } from "../../types/pin"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import oneDark from "react-syntax-highlighter/dist/esm/styles/prism/one-dark"
 import MonacoClient from "@/components/playground/monaco-client"
 import { JSRunner } from "@/components/playground/js-runner"
+import { PlaygroundModal } from "@/components/playground/playground-modal"
 import { IntegrationButtons } from "@/components/integrations/integration-buttons"
 import { RelatedPins } from "@/components/pin/related-pins"
 
@@ -25,6 +26,7 @@ export function PinModal({
   const [tab, setTab] = useState("code")
   const [editable, setEditable] = useState(pin?.code ?? "")
   const [runnerCode, setRunnerCode] = useState<string>("")
+  const [playgroundOpen, setPlaygroundOpen] = useState(false)
 
   if (!pin) return null
 
@@ -36,8 +38,16 @@ export function PinModal({
         </DialogHeader>
 
         {/* Add integrations toolbar under the header; hidden if no repoUrl is available */}
-        <div className="mt-1 mb-2">
+        <div className="mt-1 mb-2 flex items-center justify-between">
           <IntegrationButtons repoUrl={(pin as any).repoUrl} title={pin.title} />
+          <Button
+            onClick={() => setPlaygroundOpen(true)}
+            className="gap-2"
+            size="sm"
+          >
+            <Play className="h-4 w-4" />
+            Open Playground
+          </Button>
         </div>
 
         <Tabs value={tab} onValueChange={setTab} className="mt-2">
@@ -134,6 +144,13 @@ export function PinModal({
         {/* Related Pins section at the bottom of the modal */}
         <RelatedPins pin={pin} />
       </DialogContent>
+
+      {/* Playground Modal */}
+      <PlaygroundModal
+        open={playgroundOpen}
+        onOpenChange={setPlaygroundOpen}
+        pin={pin}
+      />
     </Dialog>
   )
 }

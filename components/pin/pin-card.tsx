@@ -4,11 +4,12 @@ import { useMemo, useState, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import { CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Share2, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle } from "lucide-react"
+import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Share2, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Play } from "lucide-react"
 import { SelectBoardDialog } from "@/components/board/select-board-dialog"
 import { VideoLightbox } from "@/components/reels/video-lightbox"
 import { ShareMenu } from "@/components/pin/share-menu"
 import { EditPinModal } from "@/components/pin/edit-pin-modal"
+import { PlaygroundModal } from "@/components/playground/playground-modal"
 import type { Pin } from "../../types/pin"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -45,6 +46,7 @@ export function PinCard({
   const [saveOpen, setSaveOpen] = useState(false)
   const [videoOpen, setVideoOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
+  const [playgroundOpen, setPlaygroundOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -241,6 +243,20 @@ export function PinCard({
           <div 
             className="absolute top-3 right-3 flex flex-row gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
           >
+            {/* Playground Button */}
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
+              onClick={(e) => {
+                e.stopPropagation()
+                setPlaygroundOpen(true)
+              }}
+              aria-label="Open playground"
+            >
+              <Play className="h-5 w-5 text-white" />
+            </Button>
+
             {/* Edit Button - Only show for pin owner */}
             {user && pin.author_id === user.id && (
               <button
@@ -259,9 +275,6 @@ export function PinCard({
                 <Edit className="h-5 w-5 text-white" />
               </button>
             )}
-            
-
-        
             
             {/* Like Button */}
             <Button
@@ -407,7 +420,7 @@ export function PinCard({
         <VideoLightbox open={videoOpen} onOpenChange={setVideoOpen} title={pin.title} videoUrl={pin.videoUrl} />
       ) : null}
       <EditPinModal open={editOpen} onOpenChange={setEditOpen} pin={pin} />
-     
+      <PlaygroundModal open={playgroundOpen} onOpenChange={setPlaygroundOpen} pin={pin} />
 
     </>
   )
