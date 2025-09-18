@@ -16,19 +16,19 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <header className="w-[60%] sticky top-6 z-50 my-6 mx-auto border-b bg-zinc-800/50 backdrop-blur rounded-2xl">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+      <header className="w-full md:w-[60%] sticky top-6 z-50 my-6 mx-auto border-b bg-zinc-800/50 backdrop-blur rounded-2xl">
+        <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary font-bold rounded-lg flex items-center justify-center">
               P.
             </div>
             <span className="text-xl font-bold">pinstack</span>
           </div>
-          <Button asChild className="bg-primary hover:bg-primary/90 rounded-xl">
-             <Link href="/sign-in">
-               Get Started
-             </Link>
-           </Button>
+           <Button asChild size="sm" className="bg-primary hover:bg-primary/90 rounded-xl text-sm px-3 py-1.5 md:text-base md:px-6 md:py-3">
+              <Link href="/sign-in">
+                Get Started
+              </Link>
+            </Button>
         </div>
       </header>
 
