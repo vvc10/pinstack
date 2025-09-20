@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import { CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Share2, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Play } from "lucide-react"
+import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Forward, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Play } from "lucide-react"
 import { SelectBoardDialog } from "@/components/board/select-board-dialog"
 import { VideoLightbox } from "@/components/reels/video-lightbox"
 import { ShareMenu } from "@/components/pin/share-menu"
@@ -307,7 +307,7 @@ export function PinCard({
               }}
               aria-label="Share"
             >
-              <Share2 className="h-5 w-5 text-white" />
+              <Forward className="h-5 w-5 text-white" />
             </Button>
           </div>
 
@@ -354,7 +354,7 @@ export function PinCard({
         </button>
 
         {/* Save/Remove Button - Only show on hover */}
-        <div 
+        {/* <div 
           className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
         >
             <Button
@@ -421,7 +421,7 @@ export function PinCard({
             >
               {isInBoard ? "Remove" : isSaved ? "Saved" : "Save"}
             </Button>
-        </div>
+        </div> */}
       </article>
 
       {/* Title and Status - Always visible below image */}
@@ -446,7 +446,6 @@ export function PinCard({
         url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${pin.id}`}
         title={pin.title}
       />
-
     </>
   )
 }

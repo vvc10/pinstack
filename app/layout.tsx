@@ -6,6 +6,7 @@ import { Suspense } from "react"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
+import { NoticeBannerProvider } from "@/contexts/notice-banner-context"
 import { AuthRedirect } from "@/components/auth/auth-redirect"
 import { Toaster } from "@/components/ui/sonner"
 
@@ -41,15 +42,17 @@ export default function RootLayout({
         </a>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           <AuthProvider>
-            <AuthRedirect>
-              <Suspense fallback={null}>
-                <main id="content" role="main" className="min-h-screen">
-                  {children}
-                </main>
-              </Suspense>
-            </AuthRedirect>
-            <Analytics />
-            <Toaster />
+            <NoticeBannerProvider>
+              <AuthRedirect>
+                <Suspense fallback={null}>
+                  <main id="content" role="main" className="min-h-screen">
+                    {children}
+                  </main>
+                </Suspense>
+              </AuthRedirect>
+              <Analytics />
+              <Toaster />
+            </NoticeBannerProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>

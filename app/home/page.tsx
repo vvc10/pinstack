@@ -9,7 +9,6 @@ import { MasonryPinterest } from "@/components/masonry-pinterest"
 import { MasonrySkeleton } from "@/components/skeletons/masonry-skeleton"
 import type { Pin } from "../../types/pin"
 import { PinCard } from "@/components/pin/pin-card"
-import { FiltersBar } from "@/components/filters-bar"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { DiscoveryOrb } from "@/components/ai/discovery-orb"
 import { AppLayout } from "@/components/layout/app-layout"
@@ -36,17 +35,12 @@ function HomePageContent() {
   const [mounted, setMounted] = useState(false)
 
   const [q, setQ] = useState("")
-  const [lang, setLang] = useState<string>("all")
-  const [tags, setTags] = useState<string[]>([])
   const [sort, setSort] = useState<"trending" | "most-voted" | "newest">("trending")
 
   useEffect(() => {
     setMounted(true)
     // Initialize state from search params after mounting
     setQ(searchParams.get("q") ?? "")
-    setLang(searchParams.get("lang") ?? "all")
-    const t = searchParams.get("tags")
-    setTags(t ? t.split(",").filter(Boolean) : [])
     setSort((searchParams.get("sort") as any) || "trending")
   }, [searchParams])
 
@@ -57,14 +51,6 @@ function HomePageContent() {
     }
   }, [router, searchParams])
 
-  const toggleTag = (t: string) => setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]))
-  const clearFilters = () => {
-    setLang("all")
-    setTags([])
-    setSort("trending")
-    setQ("")
-  }
-
   const getKey = (index: number, previousPageData: any) => {
     if (previousPageData && !previousPageData.nextCursor) return null
     const cursor = previousPageData ? previousPageData.nextCursor : 0
@@ -72,10 +58,18 @@ function HomePageContent() {
       cursor: String(cursor),
       limit: String(PAGE_SIZE),
     })
-    if (q) params.set("q", q)
-    if (lang && lang !== "all") params.set("lang", lang)
-    if (tags.length) params.set("tags", tags.join(","))
-    if (sort) params.set("sort", sort)
+    
+    // Get filter values from URL params
+    const urlQ = searchParams.get("q")
+    const urlLang = searchParams.get("lang")
+    const urlTags = searchParams.get("tags")
+    const urlSort = searchParams.get("sort")
+    
+    if (urlQ) params.set("q", urlQ)
+    if (urlLang && urlLang !== "all") params.set("lang", urlLang)
+    if (urlTags) params.set("tags", urlTags)
+    if (urlSort) params.set("sort", urlSort)
+    
     return `/api/pins?${params.toString()}`
   }
 
@@ -87,27 +81,12 @@ function HomePageContent() {
     setSize(1)
     mutate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, lang, tags.join(","), sort])
-
-  useEffect(() => {
-    const params = new URLSearchParams()
-    if (q) params.set("q", q)
-    if (lang && lang !== "all") params.set("lang", lang)
-    if (tags.length) params.set("tags", tags.join(","))
-    if (sort && sort !== "trending") params.set("sort", sort)
-    const qs = params.toString()
-    const href = qs ? `${pathname}?${qs}` : pathname
-    router.replace(href)
-  }, [q, lang, tags.join(","), sort, pathname, router])
+  }, [q, sort])
 
   useEffect(() => {
     const urlQ = searchParams.get("q") ?? ""
-    const urlLang = searchParams.get("lang") ?? "all"
-    const urlTags = (searchParams.get("tags") ?? "").split(",").filter(Boolean)
     const urlSort = (searchParams.get("sort") as "trending" | "most-voted" | "newest") || "trending"
     if (urlQ !== q) setQ(urlQ)
-    if (urlLang !== lang) setLang(urlLang)
-    if (urlTags.join(",") !== tags.join(",")) setTags(urlTags)
     if (urlSort !== sort) setSort(urlSort)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
@@ -154,15 +133,6 @@ function HomePageContent() {
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
       <div>
         <div className="min-w-0" data-content-area>
-          <div className="mb-5 overflow-hidden">
-            <FiltersBar
-              lang={lang}
-              onLangChange={setLang}
-              tags={tags}
-              onToggleTag={toggleTag}
-              onClear={clearFilters}
-            />
-          </div>
           {error && <p className="text-sm text-destructive">Failed to load pins. Please try again.</p>}
 
           {isInitialLoading ? (
@@ -174,12 +144,22 @@ function HomePageContent() {
                 <PinCard
                   pin={pin}
                   onTagClick={(tag) => {
-                    if (!tags.includes(tag)) {
-                      setTags([...tags, tag])
+                    const currentTags = searchParams.get("tags")?.split(",").filter(Boolean) || []
+                    if (!currentTags.includes(tag)) {
+                      const newTags = [...currentTags, tag]
+                      const params = new URLSearchParams(searchParams.toString())
+                      params.set("tags", newTags.join(","))
+                      router.push(`/?${params.toString()}`)
                     }
                   }}
                   onLangClick={(lang) => {
-                    setLang(lang)
+                    const params = new URLSearchParams(searchParams.toString())
+                    if (lang === "all") {
+                      params.delete("lang")
+                    } else {
+                      params.set("lang", lang)
+                    }
+                    router.push(`/?${params.toString()}`)
                   }}
                 />
               )}
@@ -207,7 +187,11 @@ function HomePageContent() {
       </div>
 
       {/* Floating AI Discovery orb uses current q/lang/tags to suggest pins (mock) */}
-      <DiscoveryOrb q={q} lang={lang} tags={tags} />
+      <DiscoveryOrb 
+        q={q} 
+        lang={searchParams.get("lang") ?? "all"} 
+        tags={searchParams.get("tags")?.split(",").filter(Boolean) || []} 
+      />
     </AppLayout>
   )
 }

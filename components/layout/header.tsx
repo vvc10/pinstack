@@ -10,6 +10,8 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { useSidebar } from "@/components/board/boards-sidebar"
 import { CreatePinModal } from "@/components/pin/create-pin-modal"
 import { ReelsModal } from "@/components/reels/reels-modal"
+import { NoticeBanner } from "@/components/ui/notice-banner"
+import { FiltersBar } from "@/components/filters-bar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useAuth } from "@/contexts/auth-context"
@@ -34,23 +36,94 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
   const { isCollapsed } = useSidebar()
   const { user, signOut } = useAuth()
 
+  // Filter state
+  const [lang, setLang] = useState<string>("all")
+  const [tags, setTags] = useState<string[]>([])
+
+  // Initialize filter state from URL params
+  useEffect(() => {
+    setLang(searchParams.get("lang") ?? "all")
+    const t = searchParams.get("tags")
+    setTags(t ? t.split(",").filter(Boolean) : [])
+  }, [searchParams])
+
+  // Language change handler with immediate URL update
+  const handleLangChange = (newLang: string) => {
+    setLang(newLang)
+    const params = new URLSearchParams(searchParams.toString())
+    if (newLang && newLang !== "all") {
+      params.set("lang", newLang)
+    } else {
+      params.delete("lang")
+    }
+    if (pathname === "/") {
+      router.push(`/?${params.toString()}`)
+    }
+  }
+
+  // Filter functions
+  const toggleTag = (t: string) => {
+    setTags((prev) => {
+      const newTags = prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+      // Immediately update URL for tag changes
+      const params = new URLSearchParams(searchParams.toString())
+      if (newTags.length) {
+        params.set("tags", newTags.join(","))
+      } else {
+        params.delete("tags")
+      }
+      if (pathname === "/") {
+        router.push(`/?${params.toString()}`)
+      }
+      return newTags
+    })
+  }
+
+  const clearFilters = () => {
+    setLang("all")
+    setTags([])
+    setQ("")
+    // Update URL to reflect cleared filters
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("lang")
+    params.delete("tags")
+    params.delete("q")
+    router.push(`/?${params.toString()}`)
+  }
+
   useEffect(() => {
     setMounted(true)
     // Initialize search query from URL parameters
     setQ(searchParams.get("q") ?? "")
   }, [searchParams])
 
-  // Handle search input changes with debouncing
+  // Handle search and filter changes with debouncing
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (mounted) {
         const params = new URLSearchParams(searchParams.toString())
+
+        // Update search query
         if (q.trim()) {
           params.set("q", q.trim())
         } else {
           params.delete("q")
         }
-        
+
+        // Update language filter
+        if (lang && lang !== "all") {
+          params.set("lang", lang)
+        } else {
+          params.delete("lang")
+        }
+
+        // Update tags filter
+        if (tags.length) {
+          params.set("tags", tags.join(","))
+        } else {
+          params.delete("tags")
+        }
+
         // Only auto-navigate to home page if we're already on the home page
         // This prevents redirecting from other pages like /boards
         if (pathname === "/") {
@@ -63,7 +136,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
     }, 500) // 500ms debounce
 
     return () => clearTimeout(timeoutId)
-  }, [q, mounted, router, pathname, searchParams])
+  }, [q, lang, tags, mounted, router, pathname, searchParams])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -100,11 +173,11 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
 
   return (
     <>
-      <header className={`border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
-        isCollapsed ? 'md:left-16' : 'md:left-64'
-      }`}>
+      <header className={`border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/80 fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${isCollapsed ? 'md:left-16' : 'md:left-64'
+        }`}>
+        {/* Main Header Row */}
         <div className="container mx-auto px-6 py-4 flex items-center gap-4 max-w-full">
-          
+
           {/* Large Search Bar with Sort Button - Takes up most of the width */}
           <div className="flex-1 min-w-0">
             <div className="relative w-full">
@@ -129,86 +202,83 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                   }
                 }}
               />
-              
+
               {/* Sort Button - Inside search bar, right aligned */}
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
-            <Popover open={sortOpen} onOpenChange={setSortOpen}>
-              <PopoverTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
+                <Popover open={sortOpen} onOpenChange={setSortOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="w-10 h-10 rounded-xl bg-transparent hover:bg-muted/50 border-0"
-                >
+                    >
                       <ArrowUpDown className="size-4 text-muted-foreground" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-40 p-1" align="end">
-                <div className="space-y-1">
-                  <button
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                          sort === "trending" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                    onClick={() => {
-                      onSortChange?.("trending")
-                      setSortOpen(false)
-                    }}
-                  >
-                    Trending
-                  </button>
-                  <button
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                          sort === "most-voted" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                    onClick={() => {
-                      onSortChange?.("most-voted")
-                      setSortOpen(false)
-                    }}
-                  >
-                    Most Voted
-                  </button>
-                  <button
-                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${
-                          sort === "newest" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
-                    }`}
-                    onClick={() => {
-                      onSortChange?.("newest")
-                      setSortOpen(false)
-                    }}
-                  >
-                    Newest
-                  </button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-40 p-1" align="end">
+                    <div className="space-y-1">
+                      <button
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${sort === "trending" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                          }`}
+                        onClick={() => {
+                          onSortChange?.("trending")
+                          setSortOpen(false)
+                        }}
+                      >
+                        Trending
+                      </button>
+                      <button
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${sort === "most-voted" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                          }`}
+                        onClick={() => {
+                          onSortChange?.("most-voted")
+                          setSortOpen(false)
+                        }}
+                      >
+                        Most Voted
+                      </button>
+                      <button
+                        className={`w-full text-left px-3 py-2 text-sm rounded-md transition-colors ${sort === "newest" ? "bg-primary text-primary-foreground" : "hover:bg-muted"
+                          }`}
+                        onClick={() => {
+                          onSortChange?.("newest")
+                          setSortOpen(false)
+                        }}
+                      >
+                        Newest
+                      </button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
           </div>
-          
+
           {/* All Buttons Grouped on Right Side */}
           <div className="flex items-center gap-3 flex-shrink-0">
-            
+
             {/* Add Button - Black with plus */}
-            <Button 
+            <Button
               size="icon"
               className="w-12 h-12 rounded-2xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900  hover:bg-[#222] shadow-sm"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="size-5 dark:text-zinc-900" />
             </Button>
-            
+
             {/* Reels Button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
               onClick={() => setReelsModalOpen(true)}
             >
               <SquarePlay />
             </Button>
-            
+
             {/* Theme Toggle */}
             <ThemeToggle />
-            
+
             {/* User Authentication */}
             {user ? (
               <Popover>
@@ -216,7 +286,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                   <Button
                     variant="ghost"
                     size="icon"
-                  className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                    className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
                   >
                     <Avatar className="h-8 w-8 rounded-2xl">
                       <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
@@ -260,11 +330,34 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             )}
           </div>
         </div>
+
+        {/* Filter Bar Row */}
+        <div className="container mx-auto px-6 py-4 flex flex-col items-start justify-start gap-4 max-w-full">
+          <div className="flex items-center gap-4 max-w-full w-full">
+            {/* Filter Bar - Takes up most of the width like search bar */}
+            <div className="flex-1 min-w-0">
+              <div className="overflow-hidden">
+                <FiltersBar
+                  lang={lang}
+                  onLangChange={handleLangChange}
+                  tags={tags}
+                  onToggleTag={toggleTag}
+                  onClear={clearFilters}
+                />
+              </div>
+            </div>
+          </div>
+          {/* Notice Banner */}
+          <NoticeBanner
+            message="New UI drop every week"
+            variant="info"
+          />
+        </div>
       </header>
 
       {/* Create Pin Modal */}
       <CreatePinModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
-      
+
       {/* Reels Modal */}
       <ReelsModal open={reelsModalOpen} onOpenChange={setReelsModalOpen} />
     </>

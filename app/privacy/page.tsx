@@ -106,7 +106,28 @@ export default function PrivacyPage() {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">10. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-4">10. UI Components and Credits</h2>
+            <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                <span className="text-primary font-semibold">Important Notice:</span> Pinstack is a platform that curates and showcases UI components from various sources. We do not claim ownership of all UI designs featured on our platform.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mb-4">
+                When UI components are not originally designed by the Pinstack team, we make every effort to:
+              </p>
+              <ul className="list-disc pl-6 text-muted-foreground space-y-2 mb-4">
+                <li>Display appropriate credits and attributions to the original creators</li>
+                <li>Respect intellectual property rights and design ownership</li>
+                <li>Provide clear indication of the source and creator when available</li>
+                <li>Act as a discovery platform to help users find and access UI designs they need</li>
+              </ul>
+              <p className="text-muted-foreground leading-relaxed">
+                If you are a designer or creator and believe your work is being used without proper attribution, please contact us immediately. We are committed to maintaining ethical practices and giving proper credit where it's due.
+              </p>
+            </div>
+          </section>
+
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">11. Contact Us</h2>
             <p className="text-muted-foreground leading-relaxed">
               If you have any questions about this Privacy Policy, please contact us at{" "}
               <a href="https://x.com/pankajstwt" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
