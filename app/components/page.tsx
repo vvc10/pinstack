@@ -44,17 +44,17 @@ export default function ComponentsPage() {
       <Navbar currentPage="components" />
 
       {/* Main Content */}
-      <section className="relative py-8 flex items-center justify-center overflow-hidden">
+      <section className="relative py-6 sm:py-8 flex items-center justify-center overflow-hidden">
         {/* Background with animated gradient */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent"></div>
         </div>
 
-        <div className="relative z-10 container mx-auto px-6">
+        <div className="relative z-10 container mx-auto px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
             {/* Page Header */}
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-4 mb-6">
+            <div className="text-center mb-8 sm:mb-12">
+              <div className="flex items-center justify-center gap-4 mb-4 sm:mb-6">
                  <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-white hover:bg-transparent">
                   <Link href="/">
                     <ArrowLeft className="h-4 w-4 mr-2" />
@@ -63,12 +63,12 @@ export default function ComponentsPage() {
                 </Button>
               </div>
               
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
                 UI Components
                 <span className="text-primary block">Ready to Copy</span>
               </h1>
               
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
                 Browse our curated collection of beautiful UI components. 
                 Click to copy the code and use them in your projects.
               </p>

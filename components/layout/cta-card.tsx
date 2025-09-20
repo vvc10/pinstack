@@ -27,19 +27,19 @@ export function CTACard({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]"></div>
       
       <CardContent className="p-0 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
           {/* Left Side - CTA Content */}
-          <div className="p-8 lg:p-12">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">
+          <div className="p-6 sm:p-8 lg:p-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-white">
               {title}
             </h2>
-            <p className="text-lg text-zinc-300 mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg text-zinc-300 mb-6 sm:mb-8 leading-relaxed">
               {description}
             </p>
             <Button 
               size="lg" 
               asChild 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-8 py-6 text-lg font-medium transition-all duration-300 hover:scale-105"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto"
             >
               <Link href={buttonHref}>
                 {buttonText}
@@ -49,9 +49,9 @@ export function CTACard({
           
           {/* Right Side - Component Showcase Grid */}
           {showImages && (
-            <div className="p-4 lg:p-6">
-              <div className="grid grid-cols-2 gap-8">
-                <div className="space-y-8">
+            <div className="p-3 sm:p-4 lg:p-6">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+                <div className="space-y-4 sm:space-y-6 lg:space-y-8">
                   <img
                     src="/assets/landing/image.png"
                     alt="UI Component"
@@ -63,7 +63,7 @@ export function CTACard({
                     className="w-full h-auto rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300"
                   />
                 </div>
-                <div className="space-y-8 mt-8">
+                <div className="space-y-4 sm:space-y-6 lg:space-y-8 mt-4 sm:mt-6 lg:mt-8">
                   <img
                     src="/assets/landing/image3.png"
                     alt="Code Editor"
