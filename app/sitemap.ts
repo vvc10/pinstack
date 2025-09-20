@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const host = process.env.NEXT_PUBLIC_SITE_URL || "https://pinstack.example.com"
+  const host = process.env.NEXT_PUBLIC_APP_URL || "https://pinstack.app"
   const now = new Date().toISOString()
   return [
     { url: `${host}/`, lastModified: now, changeFrequency: "daily", priority: 1 },

@@ -65,7 +65,7 @@ export function PlaygroundModal({ open, onOpenChange, pin }: PlaygroundModalProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 rounded-2xl [&>div]:rounded-2xl">
+      <DialogContent className="max-w-[95vw] max-h-[95vh] w-full h-full p-0 rounded-2xl [&>div]:rounded-2xl" showCloseButton={false}>
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">

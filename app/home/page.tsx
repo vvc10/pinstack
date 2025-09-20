@@ -143,7 +143,9 @@ function HomePageContent() {
             <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
           </div>
           <MasonrySkeleton />
+
         </div>
+
       </AppLayout>
     )
   }
@@ -152,7 +154,6 @@ function HomePageContent() {
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
       <div>
         <div className="min-w-0" data-content-area>
-    
           <div className="mb-5 overflow-hidden">
             <FiltersBar
               lang={lang}
@@ -162,17 +163,16 @@ function HomePageContent() {
               onClear={clearFilters}
             />
           </div>
-
           {error && <p className="text-sm text-destructive">Failed to load pins. Please try again.</p>}
 
           {isInitialLoading ? (
             <MasonrySkeleton items={12} />
           ) : (
-            <MasonryPinterest 
-              items={items} 
+            <MasonryPinterest
+              items={items}
               renderItem={(pin) => (
-                <PinCard 
-                  pin={pin} 
+                <PinCard
+                  pin={pin}
                   onTagClick={(tag) => {
                     if (!tags.includes(tag)) {
                       setTags([...tags, tag])
@@ -182,8 +182,8 @@ function HomePageContent() {
                     setLang(lang)
                   }}
                 />
-              )} 
-              className="mt-2" 
+              )}
+              className="mt-2"
               gap={16}
               columns={{
                 mobile: 1,
@@ -193,9 +193,7 @@ function HomePageContent() {
               }}
             />
           )}
-
           <div ref={loadMoreRef} className="h-8" aria-hidden />
-
           <div className="flex items-center justify-center py-6">
             {isValidating && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
