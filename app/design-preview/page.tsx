@@ -1,132 +1,49 @@
-import React from 'react';
-import { Star, Car } from 'lucide-react';
-
- 
-const RideBookingCard = ({ theme = 'dark' }) => {
-  const isDark = theme === 'dark';
-
+export default function Hero() {
   return (
-    <div
-      className="w-[400px] h-[200px] rounded-[24px] p-6 relative"
-      style={{
-        background: isDark 
-          ? '#3D3F42' 
-          : '#E8E8EA',
-      }}
-    >
-      <div className="flex h-full">
-        {/* Left Section - Profile */}
-        <div className="flex items-start pt-1">
-          <img
-            src="https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?auto=format&fit=crop&w=128&h=128&q=80"
-            alt="David S."
-            className="w-[64px] h-[64px] rounded-full object-cover"
-          />
-          <div className="ml-4">
-            <h2 
-              className="font-semibold leading-none mb-1"
-              style={{ 
-                fontSize: '28px',
-                color: isDark ? '#FFFFFF' : '#1C1C1E',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif'
-              }}
-            >
-              David S.
-            </h2>
-            <div className="flex items-center gap-2">
-              <span 
-                className="font-medium"
-                style={{ 
-                  fontSize: '14px',
-                  color: isDark ? '#A8A8A8' : '#6D6D70'
-                }}
-              >
-                4.0 Stars
-              </span>
-              <div className="flex gap-0.5">
-                <Star size={12} className="text-[#FFD60A] fill-[#FFD60A]" />
-                <Star size={12} className="text-[#FFD60A] fill-[#FFD60A]" />
-                <Star size={12} className="text-[#FFD60A] fill-[#FFD60A]" />
-                <Star size={12} className="text-[#FFD60A] fill-[#FFD60A]" />
-                <Star size={12} className={isDark ? "text-[#5A5A5C]" : "text-[#C7C7CC]"} />
-              </div>
-            </div>
-          </div>
-        </div>
+    <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 py-16 bg-gradient-to-b from-[#FF6B2C] via-[#FF8E53] to-[#592EDB]">
+      {/* Navbar */}
+      <header className="absolute top-0 left-0 w-full flex justify-between items-center px-12 py-6">
+        <h1 className="text-white font-semibold text-xl tracking-tight">RightFit</h1>
+        <nav className="hidden md:flex gap-10 text-white font-normal text-base">
+          <a href="#" className="hover:opacity-80 transition">Home</a>
+          <a href="#" className="hover:opacity-80 transition">Blogs</a>
+        </nav>
+        <button className="bg-white/15 text-white px-6 py-2.5 rounded-full border border-white/30 hover:bg-white/25 transition text-sm font-medium shadow-sm">
+          Login →
+        </button>
+      </header>
 
-        {/* Right Section - Car Info */}
-        <div className="flex-1 flex flex-col items-end pt-1 pr-2">
-          <div className="flex items-center gap-2 mb-1">
-            <Car 
-              size={16} 
-              className={isDark ? "text-[#A8A8A8]" : "text-[#6D6D70]"} 
-            />
-            <span 
-              className="font-medium"
-              style={{ 
-                fontSize: '16px',
-                color: isDark ? '#FFFFFF' : '#1C1C1E',
-                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif'
-              }}
-            >
-              Toyota Camry
-            </span>
-          </div>
-          <span 
-            style={{ 
-              fontSize: '14px',
-              color: isDark ? '#A8A8A8' : '#6D6D70',
-              marginRight: '18px'
-            }}
-          >
-            Silver
-          </span>
+      {/* Hero Content */}
+      <div className="max-w-4xl mt-28 md:mt-40">
+        <p className="text-white/70 text-sm mb-5 tracking-wide uppercase">
+          2500+ already escaped the traditional job hunt
+        </p>
+        <h1 className="text-[44px] md:text-[64px] font-light text-white leading-[1.15] tracking-tight">
+          Show your <span className="italic font-semibold">Skills</span>. Skip the <span className="italic font-semibold">Resumes</span> noise.
+        </h1>
+        <p className="mt-8 text-white/75 text-lg leading-relaxed max-w-2xl mx-auto">
+          Join 2,500+ professionals and companies using Rightfit to hire and get hired — faster, smarter, and based on proof of work.
+        </p>
+
+        <div className="mt-10 flex flex-wrap gap-5 justify-center">
+          <button className="px-8 py-3.5 bg-white text-[#592EDB] rounded-full font-semibold shadow-md hover:shadow-lg transition text-base">
+            Get started →
+          </button>
+          <button className="px-8 py-3.5 bg-[#592EDB] text-white rounded-full font-semibold shadow-md hover:shadow-lg transition text-base">
+            Hire talent
+          </button>
         </div>
       </div>
 
-      {/* Bottom Buttons */}
-      <div className="absolute bottom-6 left-6 right-6 flex gap-3">
-        <button 
-          className="flex-1 text-center font-semibold rounded-2xl transition-transform active:scale-[0.98]"
-          style={{
-            height: '44px',
-            fontSize: '16px',
-            background: isDark ? '#5A5A5C' : '#BABAC0',
-            color: isDark ? '#E5E5E7' : '#1C1C1E',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif'
-          }}
-        >
-          Schedule
-        </button>
-        <button 
-          className="flex-1 text-center font-semibold rounded-2xl text-white transition-transform active:scale-[0.98]"
-          style={{
-            height: '44px',
-            fontSize: '16px',
-            background: 'linear-gradient(180deg, #4C8EF7 0%, #2563EB 100%)',
-            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif'
-          }}
-        >
-          Book Ride
-        </button>
+      {/* Mockup */}
+      <div className="mt-20 w-full max-w-5xl bg-white/10 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden border border-white/20">
+        <img
+          src="/demo-profile.png"
+          alt="Profile preview"
+          className="w-full object-cover"
+        />
       </div>
-    </div>
-  );
-};
- 
- 
-export default function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F5F5F7] p-8 gap-12">
-      <RideBookingCard theme="dark" />
-      <RideBookingCard theme="light" />
-    </div>
+    </section>
   );
 }
+

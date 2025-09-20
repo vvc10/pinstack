@@ -47,6 +47,7 @@ export function PinCard({
   const [videoOpen, setVideoOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
   const [playgroundOpen, setPlaygroundOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -197,6 +198,10 @@ export function PinCard({
     }
   }, [pin.id, pin.title, currentUserId, isLiked, broadcastVote])
 
+  const handleShare = useCallback(() => {
+    setShareOpen(true)
+  }, [])
+
   return (
     <>
       <article
@@ -244,7 +249,7 @@ export function PinCard({
             className="absolute top-3 right-3 flex flex-row gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
           >
             {/* Playground Button */}
-            <Button
+            {/* <Button
               size="icon"
               variant="secondary"
               className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
@@ -255,7 +260,7 @@ export function PinCard({
               aria-label="Open playground"
             >
               <Play className="h-5 w-5 text-white" />
-            </Button>
+            </Button> */}
 
             {/* Edit Button - Only show for pin owner */}
             {user && pin.author_id === user.id && (
@@ -289,6 +294,20 @@ export function PinCard({
               aria-label="Like"
             >
               <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-white'}`} />
+            </Button>
+
+            {/* Share Button */}
+            <Button
+              size="icon"
+              variant="secondary"
+              className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleShare()
+              }}
+              aria-label="Share"
+            >
+              <Share2 className="h-5 w-5 text-white" />
             </Button>
           </div>
 
@@ -421,6 +440,12 @@ export function PinCard({
       ) : null}
       <EditPinModal open={editOpen} onOpenChange={setEditOpen} pin={pin} />
       <PlaygroundModal open={playgroundOpen} onOpenChange={setPlaygroundOpen} pin={pin} />
+      <ShareMenu 
+        open={shareOpen} 
+        onOpenChange={setShareOpen}
+        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${pin.id}`}
+        title={pin.title}
+      />
 
     </>
   )

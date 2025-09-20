@@ -15,10 +15,14 @@ export function RelatedPins({ pin }: { pin: Pin }) {
     const p = new URLSearchParams()
     p.set("cursor", "0")
     p.set("limit", "24")
-    if (pin.lang) p.set("lang", pin.lang)
-    if (pin.tags?.length) p.set("tags", pin.tags.join(","))
+    
+    // Simple: Use ALL tags to find pins with same component type OR same tags
+    if (pin.tags?.length) {
+      p.set("tags", pin.tags.join(","))
+    }
+    
     return p.toString()
-  }, [pin.lang, pin.tags])
+  }, [pin.tags])
 
   useEffect(() => {
     let alive = true
@@ -28,7 +32,8 @@ export function RelatedPins({ pin }: { pin: Pin }) {
         const res = await fetch(`/api/pins?${qs}`)
         const json = await res.json()
         const list: Pin[] = (json?.items as Pin[]) || []
-        // remove current and pick top 8
+        
+        // Simple: Remove current pin and show top 8
         const filtered = list.filter((p) => p.id !== pin.id).slice(0, 8)
         if (alive) setItems(filtered)
       } catch {
@@ -45,6 +50,13 @@ export function RelatedPins({ pin }: { pin: Pin }) {
 
   return (
     <section aria-label="Related Pins" className="mt-6">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-foreground">More like this</h3>
+        <p className="text-sm text-muted-foreground">
+          Discover similar components and designs
+        </p>
+      </div>
+      
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -64,7 +76,12 @@ export function RelatedPins({ pin }: { pin: Pin }) {
           }}
         />
       ) : (
-        <p className="text-sm text-muted-foreground">No related pins found.</p>
+        <div className="text-center py-8">
+          <p className="text-sm text-muted-foreground">No related pins found.</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Try exploring other components in the same category
+          </p>
+        </div>
       )}
     </section>
   )

@@ -38,6 +38,17 @@ export function MasonryPinterest<T>({
     return classes.join(' ')
   }
 
+  // Safety check to prevent map error
+  if (!items || !Array.isArray(items)) {
+    return (
+      <div className={`w-full ${className}`}>
+        <div className="text-center py-8 text-muted-foreground">
+          No items to display
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`w-full ${className}`}>
       <div 

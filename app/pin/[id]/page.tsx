@@ -11,6 +11,7 @@ import oneDark from "react-syntax-highlighter/dist/esm/styles/prism/one-dark"
 import MonacoClient from "@/components/playground/monaco-client"
 import { JSRunner } from "@/components/playground/js-runner"
 import { IntegrationButtons } from "@/components/integrations/integration-buttons"
+import { CustomTooltip } from "@/components/ui/custom-tooltip"
 import { RelatedPins } from "@/components/pin/related-pins"
 import { ShareMenu } from "@/components/pin/share-menu"
 import { EditPinModal } from "@/components/pin/edit-pin-modal"
@@ -492,14 +493,16 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                           <p className="text-sm text-muted-foreground max-w-md">
                             Copy file and paste it in figma file to start editing UI design
                           </p>
-                            <Button
-                            size="lg"
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-6 py-3 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer"
-                              onClick={() => navigator.clipboard.writeText(pin.code)}
-                        >
-                            <Figma className="w-4 h-4 mr-2" />
-                            Copy to Figma
-                            </Button>
+                            <CustomTooltip content="Coming soon" side="top">
+                              <Button
+                                size="lg"
+                                disabled
+                                className="bg-muted text-muted-foreground font-medium px-6 py-3 rounded-xl shadow-sm opacity-50 cursor-not-allowed"
+                              >
+                                <Figma className="w-4 h-4 mr-2" />
+                                Copy to Figma
+                              </Button>
+                            </CustomTooltip>
                       </div>
                     </div>
                   </TabsContent>
@@ -519,13 +522,15 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                           <p className="text-sm text-muted-foreground">
                             Interactive code editor coming soon
                           </p>
-                        <Button
-                            size="lg"
-                            // disabled
-                            className="bg-muted text-muted-foreground font-medium px-6 py-3 rounded-xl"
-                          >
-                            Open Playground
+                          <CustomTooltip content="Coming soon" side="top">
+                            <Button
+                              size="lg"
+                              disabled
+                              className="bg-muted text-muted-foreground font-medium px-6 py-3 rounded-xl opacity-50 cursor-not-allowed"
+                            >
+                              Open Playground
                             </Button>
+                          </CustomTooltip>
                       </div>
                     </div>
                   </TabsContent>

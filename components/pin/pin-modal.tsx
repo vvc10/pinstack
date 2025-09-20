@@ -32,7 +32,7 @@ export function PinModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl rounded-2xl [&>div]:rounded-2xl">
+      <DialogContent className="!max-w-[98vw] w-[98vw] h-[95vh] rounded-2xl [&>div]:rounded-2xl sm:!max-w-[98vw] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-pretty">{pin.title}</DialogTitle>
         </DialogHeader>
@@ -50,7 +50,7 @@ export function PinModal({
           </Button>
         </div>
 
-        <Tabs value={tab} onValueChange={setTab} className="mt-2">
+        <Tabs value={tab} onValueChange={setTab} className="mt-2 flex-1 flex flex-col overflow-hidden">
           <TabsList>
             <TabsTrigger value="code">Code</TabsTrigger>
             <TabsTrigger value="preview">Preview</TabsTrigger>
@@ -58,8 +58,8 @@ export function PinModal({
             <TabsTrigger value="playground">Playground</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="code" className="mt-3">
-            <div className="rounded-md bg-muted/50 ring-1 ring-border overflow-hidden">
+          <TabsContent value="code" className="mt-3 flex-1 flex flex-col overflow-hidden">
+            <div className="rounded-md bg-muted/50 ring-1 ring-border overflow-hidden flex-1 flex flex-col">
               <div className="flex items-center justify-between px-3 py-2 border-b">
                 <span className="text-xs text-muted-foreground">Language: {pin.lang}</span>
                 <Button
@@ -73,19 +73,22 @@ export function PinModal({
                   Copy
                 </Button>
               </div>
-              <SyntaxHighlighter
-                language={pin.lang === "typescript" ? "tsx" : pin.lang}
-                style={oneDark as any}
-                customStyle={{
-                  margin: 0,
-                  background: "transparent",
-                  padding: "1rem",
-                  fontSize: "0.85rem",
-                  lineHeight: 1.6,
-                }}
-              >
-                {editable}
-              </SyntaxHighlighter>
+              <div className="flex-1 overflow-auto">
+                <SyntaxHighlighter
+                  language={pin.lang === "typescript" ? "tsx" : pin.lang}
+                  style={oneDark as any}
+                  customStyle={{
+                    margin: 0,
+                    background: "transparent",
+                    padding: "1rem",
+                    fontSize: "0.85rem",
+                    lineHeight: 1.6,
+                    minWidth: "fit-content",
+                  }}
+                >
+                  {editable}
+                </SyntaxHighlighter>
+              </div>
             </div>
           </TabsContent>
 
@@ -108,8 +111,8 @@ export function PinModal({
             </TabsContent>
           ) : null}
 
-          <TabsContent value="playground" className="mt-3">
-            <div className="flex flex-col gap-3">
+          <TabsContent value="playground" className="mt-3 flex-1 flex flex-col overflow-hidden">
+            <div className="flex flex-col gap-3 flex-1 overflow-hidden">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">
                   Language: {pin.lang}. Runner supports JavaScript only for now.
@@ -134,9 +137,13 @@ export function PinModal({
                 </div>
               </div>
 
-              <MonacoClient language={pin.lang} value={editable} onChange={setEditable} height={280} />
+              <div className="flex-1 overflow-hidden">
+                <MonacoClient language={pin.lang} value={editable} onChange={setEditable} height={280} />
+              </div>
 
-              <JSRunner code={runnerCode} onReset={() => setRunnerCode("")} />
+              <div className="flex-1 overflow-hidden">
+                <JSRunner code={runnerCode} onReset={() => setRunnerCode("")} />
+              </div>
             </div>
           </TabsContent>
         </Tabs>

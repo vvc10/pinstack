@@ -51,7 +51,7 @@ export function Navbar({ currentPage }: NavbarProps) {
           
           {/* Desktop CTA Button */}
           <div className="hidden sm:block">
-            <Button asChild size="sm" className="text-sm sm:text-base px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl">
+            <Button asChild size="sm" className="text-sm sm:text-base px-3 sm:px-4 md:px-6 py-3 sm:py-3 rounded-xl">
               <Link href="/sign-in">
                 Login
                 <div className="ml-2 sm:ml-3 w-4 h-4 sm:w-6 sm:h-6 bg-foreground/10 rounded-md flex items-center justify-center">

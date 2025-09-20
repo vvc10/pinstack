@@ -2,6 +2,7 @@
 
 import { AppLayout } from "@/components/layout/app-layout"
 import { MasonryPinterest } from "@/components/masonry-pinterest"
+import { PinCard } from "@/components/pin/pin-card"
 import { useState, useEffect } from "react"
 import { Pin } from "@/types/pin"
 
@@ -103,14 +104,23 @@ export default function RecentPage() {
   return (
     <AppLayout currentTab="recent">
       <div className="space-y-6">
-        <div className="text-center py-8">
+        <div className="text-left py-8">
           <h1 className="text-3xl font-bold mb-2">Recent Pins</h1>
           <p className="text-muted-foreground">
             Fresh pins posted in the last 24 hours ({pins.length} pins)
           </p>
         </div>
         
-        <MasonryPinterest pins={pins} />
+        <MasonryPinterest 
+          items={pins} 
+          renderItem={(pin) => (
+            <PinCard
+              pin={pin}
+              onTagClick={() => {}} // No tag filtering on recent page
+              onLangClick={() => {}} // No language filtering on recent page
+            />
+          )}
+        />
       </div>
     </AppLayout>
   )
