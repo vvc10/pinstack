@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ArrowLeft } from "lucide-react"
@@ -11,6 +12,14 @@ import { Footer } from "@/components/layout/footer"
 import { CTACard } from "@/components/layout/cta-card"
 
 export default function ComponentsPage() {
+  // Set dark mode as default if no theme is set
+  useEffect(() => {
+    // Only add dark mode if no theme is already set
+    if (!document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light')) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
+
   const componentImages = [
     {
       src: "/assets/landing/image.png",

@@ -13,7 +13,7 @@ export function Footer({ currentPage }: FooterProps) {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary font-bold rounded-lg flex items-center justify-center text-sm sm:text-base">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary font-bold rounded-lg flex items-center justify-center text-sm sm:text-base text-primary-foreground">
                 P.
               </div>
               <span className="font-semibold text-base sm:text-lg">pinstack</span>

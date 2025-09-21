@@ -21,7 +21,7 @@ export function CTACard({
   showImages = true
 }: CTACardProps) {
   return (
-    <Card className="rounded-2xl border-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 text-white overflow-hidden relative">
+    <Card className="rounded-2xl border-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 text-foreground dark:text-white overflow-hidden relative">
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]"></div>
@@ -30,10 +30,10 @@ export function CTACard({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
           {/* Left Side - CTA Content */}
           <div className="p-6 sm:p-8 lg:p-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-white">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-foreground dark:text-white">
               {title}
             </h2>
-            <p className="text-base sm:text-lg text-zinc-300 mb-6 sm:mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg text-muted-foreground dark:text-zinc-300 mb-6 sm:mb-8 leading-relaxed">
               {description}
             </p>
             <Button 

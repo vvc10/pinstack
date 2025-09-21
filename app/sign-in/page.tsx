@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAuth } from '@/contexts/auth-context'
 import { PublicRouteGuard } from '@/components/auth/auth-guard'
-import { Chrome } from 'lucide-react'
+import { Chrome, Loader2 } from 'lucide-react'
 
 function SignInForm() {
   const [loading, setLoading] = useState(false)
@@ -15,6 +15,14 @@ function SignInForm() {
   const { signInWithGoogle } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  // Set dark mode as default if no theme is set
+  useEffect(() => {
+    // Only add dark mode if no theme is already set
+    if (!document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light')) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   // Check for error from callback
   const authError = searchParams.get('error')
@@ -65,7 +73,11 @@ function SignInForm() {
               className="w-full rounded-xl cursor-pointer"
               size="lg"
             >
-              <Chrome className="mr-2 h-5 w-5" />
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Chrome className="mr-2 h-5 w-5" />
+              )}
               {loading ? 'Signing in...' : 'Continue with Google'}
             </Button>
 

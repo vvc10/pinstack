@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Chrome, Code, Users, Zap, ArrowRight, Copy } from "lucide-react"
+import { Chrome, Code, Users, ArrowRight, Copy, Rocket, Shield } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { useEffect, useRef } from "react"
@@ -13,6 +13,14 @@ import { CTACard } from "@/components/layout/cta-card"
 
 export default function LandingPage() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Set dark mode as default if no theme is set
+  useEffect(() => {
+    // Only add dark mode if no theme is already set
+    if (!document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light')) {
+      document.documentElement.classList.add('dark');
+    }
+  }, []);
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText("Please login to copy actual code");
@@ -71,7 +79,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20" data-theme="dark">
       <Navbar currentPage="landing" />
 
       {/* Hero Section */}
@@ -85,35 +93,35 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               {/* Left Content */}
-              <div className="text-left space-y-6 sm:space-y-8">
+              <div className="text-center sm:text-left space-y-6 sm:space-y-8">
                 {/* Pre-heading */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm text-muted-foreground justify-center sm:justify-start">
                   <span>Join 200+ developers shipping faster</span>
-                  <Link href="/components" className="text-primary hover:underline flex items-center gap-1">
+                  <Link href="/components" className="text-primary hover:underline flex items-center gap-1 justify-center sm:justify-start">
                     View more
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>
 
                 {/* Main Heading */}
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-tight">
                   Beautiful UIs.
                   <span className="text-primary block">Ready to copy.</span>
                 </h1>
 
-                {/* Sub-heading */}
-                <p className="text-lg sm:text-xl text-muted-foreground">
-                  Skip the design phase. Get production-ready code in seconds.
-                </p>
+               
 
                 {/* Description with USP */}
-                <p className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed">
+                <p className="text-base sm:text-lg text-muted-foreground max-w-lg leading-relaxed mx-auto sm:mx-0">
                   Stop scrolling hours on pinterest for UI design inspiration. No more eye candy UIs on Pinterest. 
                   <span className="text-primary font-semibold"> Get instant code, use it, ship it.</span> Browse our curated collection of stunning components and ship your next project in record time.
                 </p>
-
+ {/* Sub-heading */}
+ <p className="text-lg sm:text-xl text-muted-foreground mx-auto sm:mx-0">
+                  Skip the design phase. Get production-ready code in seconds.
+                </p>
                 {/* CTA Button */}
-                <Button size="lg" asChild className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl w-full sm:w-auto">
+                <Button size="lg" asChild className="text-base sm:text-lg px-6 sm:px-8 py-4 sm:py-6 rounded-xl w-full sm:w-auto mx-auto sm:mx-0">
                   <Link href="/sign-in">
                     <Chrome className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
                     Get Started 
@@ -247,11 +255,11 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
-                Everything you need to organize code
+                Everything you need to ship faster
               </h2>
               <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-                From discovery to collaboration, pinstack provides all the tools
-                developers need to build amazing projects.
+                From discovery to deployment, pinstack provides all the tools
+                developers need to build and ship amazing projects.
               </p>
             </div>
 
@@ -259,12 +267,12 @@ export default function LandingPage() {
               <Card className="rounded-2xl border-0">
                 <CardHeader className="p-6">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                    <Code className="h-6 w-6 text-primary" />
+                    <Rocket className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Discover Code</CardTitle>
+                  <CardTitle className="text-xl">Discover & Ship Fast</CardTitle>
                   <CardDescription className="text-base">
-                    Browse hundreds of code snippets, components, and solutions
-                    from the developer community.
+                    Browse hundreds of components, copy the code instantly, and ship
+                    your projects in minutes. No more waiting or complex setup.
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -285,15 +293,16 @@ export default function LandingPage() {
               <Card className="rounded-2xl border-0">
                 <CardHeader className="p-6">
                   <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                    <Zap className="h-6 w-6 text-primary" />
+                    <Shield className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-xl">Stay Updated</CardTitle>
+                  <CardTitle className="text-xl">Production Ready</CardTitle>
                   <CardDescription className="text-base">
-                    Follow trending topics, get notified about new releases,
-                    and never miss the latest in web development.
+                    All components are tested, optimized, and ready for production.
+                    No bugs, no surprises, just reliable code that works.
                   </CardDescription>
                 </CardHeader>
               </Card>
+
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { User, Search, Menu, ArrowUpDown, Plus, LogOut, SquarePlay } from "lucide-react"
+import { User, Search, Menu, ArrowUpDown, Plus, LogOut, SquarePlay, Megaphone } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useSidebar } from "@/components/board/boards-sidebar"
 import { CreatePinModal } from "@/components/pin/create-pin-modal"
@@ -349,7 +349,8 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
           </div>
           {/* Notice Banner */}
           <NoticeBanner
-            message="New UI drop every week"
+            message="New: Live preview feature 👀 - see your code in action!"
+            // icon={Megaphone}
             variant="info"
           />
         </div>

@@ -295,22 +295,22 @@ export default function App() {
               <div className="h-full">
                 <CodePreview 
                   code={code} 
-                  language={pin.lang}
-                />
-              </div>
+                    language={pin.lang}
+                  />
+                </div>
             ) : (
               <div className="h-full flex items-center justify-center bg-muted/20 rounded-lg border-2 border-dashed border-muted-foreground/25 m-4">
-                <div className="text-center">
-                  <div className="text-4xl mb-2">🚧</div>
-                  <p className="text-sm text-muted-foreground">
-                    Live preview not available for {pin.lang}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">🚧</div>
+                        <p className="text-sm text-muted-foreground">
+                          Live preview not available for {pin.lang}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
                     Only JavaScript, TypeScript, React, and HTML are currently supported
-                  </p>
-                </div>
-              </div>
-            )}
+                        </p>
+                      </div>
+                    </div>
+                  )}
           </div>
         </div>
       </DialogContent>

@@ -3,9 +3,11 @@
 import { X, Megaphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useNoticeBanner } from "@/contexts/notice-banner-context"
+import { LucideIcon } from "lucide-react"
 
 interface NoticeBannerProps {
   message: string
+  icon?: LucideIcon
   variant?: "default" | "info" | "success" | "warning" | "error"
   dismissible?: boolean
   onDismiss?: () => void
@@ -13,18 +15,24 @@ interface NoticeBannerProps {
 
 export function NoticeBanner({ 
   message, 
+  icon: Icon = Megaphone,
   variant = "default", 
   dismissible = true,
   onDismiss 
 }: NoticeBannerProps) {
   const { isVisible, setIsVisible } = useNoticeBanner()
 
+  console.log("NoticeBanner render:", { isVisible, message })
+
   const handleDismiss = () => {
     setIsVisible(false)
     onDismiss?.()
   }
 
-  if (!isVisible) return null
+  if (!isVisible) {
+    console.log("NoticeBanner: Not visible, returning null")
+    return null
+  }
 
   const variantStyles = {
     default: "bg-primary/10 text-primary border-primary/20",
@@ -37,7 +45,7 @@ export function NoticeBanner({
   return (
     <div className={`w-full border rounded-xl px-4 py-3 flex items-center justify-between gap-3 ${variantStyles[variant]}`}>
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <Megaphone className="h-4 w-4 flex-shrink-0" />
+        <Icon className="h-4 w-4 flex-shrink-0" />
         <span className="text-sm font-medium truncate">{message}</span>
       </div>
       

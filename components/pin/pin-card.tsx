@@ -4,12 +4,12 @@ import { useMemo, useState, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import { CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Forward, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Play } from "lucide-react"
+import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Forward, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Eye } from "lucide-react"
 import { SelectBoardDialog } from "@/components/board/select-board-dialog"
 import { VideoLightbox } from "@/components/reels/video-lightbox"
 import { ShareMenu } from "@/components/pin/share-menu"
 import { EditPinModal } from "@/components/pin/edit-pin-modal"
-import { PlaygroundModal } from "@/components/playground/playground-modal"
+import { PreviewModal } from "@/components/pin/preview-modal"
 import type { Pin } from "../../types/pin"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -30,15 +30,15 @@ const LANG_HOVER_SHADOW: Record<string, string> = {
   sql: "hover:shadow-[0_0_0_2px_rgba(139,92,246,0.7)]",
 }
 
-export function PinCard({ 
-  pin, 
-  onTagClick, 
-  onLangClick, 
-  isInBoard = false, 
-  onRemoveFromBoard 
-}: { 
-  pin: Pin; 
-  onTagClick?: (tag: string) => void; 
+export function PinCard({
+  pin,
+  onTagClick,
+  onLangClick,
+  isInBoard = false,
+  onRemoveFromBoard
+}: {
+  pin: Pin;
+  onTagClick?: (tag: string) => void;
   onLangClick?: (lang: string) => void;
   isInBoard?: boolean;
   onRemoveFromBoard?: () => void;
@@ -46,23 +46,23 @@ export function PinCard({
   const [saveOpen, setSaveOpen] = useState(false)
   const [videoOpen, setVideoOpen] = useState(false)
   const [editOpen, setEditOpen] = useState(false)
-  const [playgroundOpen, setPlaygroundOpen] = useState(false)
   const [shareOpen, setShareOpen] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
 
   const { user } = useAuth()
-  
+
   // Get responsive info for layout
   const { breakpoint, columns } = useResponsive()
-  
+
   // Real-time votes
   const { voteCount: realtimeVoteCount, isLiked, isConnected, currentUserId, broadcastVote } = useRealtimeVotes(pin.id)
-  
+
   // Saved pins hook
   const { isPinSaved, addToSaved, removeFromSaved } = useSavedPins()
   const isSaved = isPinSaved(pin.id)
-  
+
 
 
   useEffect(() => {
@@ -84,7 +84,7 @@ export function PinCard({
   // Status indicator component
   const StatusIndicator = ({ status }: { status?: string }) => {
     if (!status || status === 'published') return null
-    
+
     const statusConfig = {
       pending: {
         icon: Clock,
@@ -105,12 +105,12 @@ export function PinCard({
         iconClassName: 'text-blue-600 dark:text-blue-400'
       }
     }
-    
+
     const config = statusConfig[status as keyof typeof statusConfig]
     if (!config) return null
-    
+
     const Icon = config.icon
-    
+
     return (
       <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${config.className}`}>
         <Icon className={`h-3 w-3 ${config.iconClassName}`} />
@@ -138,34 +138,34 @@ export function PinCard({
       console.log('❌ No currentUserId, cannot like')
       return
     }
-    
-    console.log('🔄 Pin card like clicked:', { 
-      pinId: pin.id, 
-      currentIsLiked: isLiked, 
-      currentUserId 
+
+    console.log('🔄 Pin card like clicked:', {
+      pinId: pin.id,
+      currentIsLiked: isLiked,
+      currentUserId
     })
-    
+
     // Optimistic update - immediately show the new state
     const newIsLiked = !isLiked
-    
+
     console.log('🔄 Optimistic update:', { newIsLiked })
-    
+
     // Broadcast optimistic update immediately (count will be handled by API)
     broadcastVote(0, newIsLiked, newIsLiked ? 'like' : 'unlike')
-    
+
     try {
       const response = await fetch('/api/votes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pinId: pin.id, userId: currentUserId })
       })
-      
+
       if (response.ok) {
         const data = await response.json()
         console.log('✅ API response:', data)
         // Broadcast the actual data from the database to sync with reality
         broadcastVote(data.count, data.isLiked, data.isLiked ? 'like' : 'unlike')
-        
+
         // Show toast notification
         if (data.isLiked) {
           toast.success("❤️ Liked!", {
@@ -178,14 +178,14 @@ export function PinCard({
             duration: 3000,
           })
         }
-        } else {
+      } else {
         console.error('Failed to toggle vote')
         // Revert optimistic update on error
         broadcastVote(0, isLiked, isLiked ? 'like' : 'unlike')
         toast.error("❌ Failed to Like", {
           description: "Something went wrong. Please try again.",
-            duration: 3000,
-          })
+          duration: 3000,
+        })
       }
     } catch (error) {
       console.error('Error toggling vote:', error)
@@ -200,6 +200,10 @@ export function PinCard({
 
   const handleShare = useCallback(() => {
     setShareOpen(true)
+  }, [])
+
+  const handlePreview = useCallback(() => {
+    setPreviewOpen(true)
   }, [])
 
   return (
@@ -222,12 +226,12 @@ export function PinCard({
             src={pin.image || "/placeholder.svg"}
             alt={`Preview for ${pin.title} in ${pin.lang}`}
             className="w-full h-auto"
-            style={{ 
+            style={{
               // Remove fixed height to let image show its natural dimensions
               // The image will maintain its aspect ratio
             }}
           />
-          
+
           {/* Video Play Button Overlay */}
           {pin.videoUrl ? (
             <div
@@ -241,26 +245,13 @@ export function PinCard({
               <PlayCircle className="h-12 w-12 text-white/90 drop-shadow-lg" />
             </div>
           ) : null}
- 
-        
+
+
 
           {/* Top Right Action Buttons - Visible on Hover */}
-          <div 
+          <div
             className="absolute top-3 right-3 flex flex-row gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
           >
-            {/* Playground Button */}
-            {/* <Button
-              size="icon"
-              variant="secondary"
-              className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
-              onClick={(e) => {
-                e.stopPropagation()
-                setPlaygroundOpen(true)
-              }}
-              aria-label="Open playground"
-            >
-              <Play className="h-5 w-5 text-white" />
-            </Button> */}
 
             {/* Edit Button - Only show for pin owner */}
             {user && pin.author_id === user.id && (
@@ -280,22 +271,21 @@ export function PinCard({
                 <Edit className="h-5 w-5 text-white" />
               </button>
             )}
-            
-            {/* Like Button */}
+
+         
+            {/* Live Preview Button */}
             <Button
               size="icon"
               variant="secondary"
               className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
               onClick={(e) => {
                 e.stopPropagation()
-                console.log('✅ Like button clicked for pin:', pin.id)
-                handleLike()
+                handlePreview()
               }}
-              aria-label="Like"
+              aria-label="Live Preview"
             >
-              <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-white'}`} />
+              <Eye className="h-5 w-5 text-white" />
             </Button>
-
             {/* Share Button */}
             <Button
               size="icon"
@@ -309,20 +299,34 @@ export function PinCard({
             >
               <Forward className="h-5 w-5 text-white" />
             </Button>
+    {/* Like Button */}
+    <Button
+              size="icon"
+              variant="secondary"
+              className="h-10 w-10 rounded-full bg-white/0 hover:bg-white/0 z-20 cursor-pointer hover:scale-110 transition-all duration-200 pointer-events-auto"
+              onClick={(e) => {
+                e.stopPropagation()
+                console.log('✅ Like button clicked for pin:', pin.id)
+                handleLike()
+              }}
+              aria-label="Like"
+            >
+              <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-white'}`} />
+            </Button>
+
           </div>
 
           {/* Center Copy Button - Visible on Hover */}
-          <div 
+          <div
             className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
           >
             <Button
               size="icon"
               variant="secondary"
-              className={`h-fit w-fit px-2 py-2 rounded-xl shadow-lg backdrop-blur-sm z-20 transition-all duration-200 cursor-pointer hover:scale-110 pointer-events-auto dark:bg-zinc-200 ${
-                copied 
-                  ? 'bg-green-500/90 hover:bg-green-500 text-white' 
+              className={`h-fit w-fit px-2 py-2 rounded-xl shadow-lg backdrop-blur-sm z-20 transition-all duration-200 cursor-pointer hover:scale-110 pointer-events-auto dark:bg-zinc-200 ${copied
+                  ? 'bg-green-500/90 hover:bg-green-500 text-white'
                   : 'bg-card/90 hover:bg-card'
-              }`}
+                }`}
               onClick={(e) => {
                 e.stopPropagation()
                 navigator.clipboard.writeText(pin.code)
@@ -343,12 +347,12 @@ export function PinCard({
                   <Check className="h-4 w-4" />
                   <span className="text-xs font-medium">Copied</span>
                 </div>
-                              ) : (
-                  <div className="flex items-center gap-2 dark:text-zinc-800">
-                    <Code className="h-4 w-4" />
-                    <span className="text-xs font-medium">Copy</span>
-                  </div>
-                )}
+              ) : (
+                <div className="flex items-center gap-2 dark:text-zinc-800">
+                  <Code className="h-4 w-4" />
+                  <span className="text-xs font-medium">Copy</span>
+                </div>
+              )}
             </Button>
           </div>
         </button>
@@ -439,9 +443,9 @@ export function PinCard({
         <VideoLightbox open={videoOpen} onOpenChange={setVideoOpen} title={pin.title} videoUrl={pin.videoUrl} />
       ) : null}
       <EditPinModal open={editOpen} onOpenChange={setEditOpen} pin={pin} />
-      <PlaygroundModal open={playgroundOpen} onOpenChange={setPlaygroundOpen} pin={pin} />
-      <ShareMenu 
-        open={shareOpen} 
+      <PreviewModal open={previewOpen} onOpenChange={setPreviewOpen} pin={pin} />
+      <ShareMenu
+        open={shareOpen}
         onOpenChange={setShareOpen}
         url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${pin.id}`}
         title={pin.title}
