@@ -139,7 +139,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
         <main className="min-h-screen bg-background">
 
           {/* Main Content Area */}
-          <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="w-full mx-auto px-4 py-6">
             {/* Flex Layout - Left Preview (60%) & Right Sidebar (40%) */}
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 mb-12">
               {/* Left Side - Preview */}

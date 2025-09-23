@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback, useEffect } from "react"
 import useSWR from "swr"
 import { CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Forward, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Eye } from "lucide-react"
+import { Bookmark, ExternalLink, Heart, PlayCircle, MoreHorizontal, Forward, Edit, Copy, Check, Code, Clock, CheckCircle, XCircle, Play } from "lucide-react"
 import { SelectBoardDialog } from "@/components/board/select-board-dialog"
 import { VideoLightbox } from "@/components/reels/video-lightbox"
 import { ShareMenu } from "@/components/pin/share-menu"
@@ -284,7 +284,7 @@ export function PinCard({
               }}
               aria-label="Live Preview"
             >
-              <Eye className="h-5 w-5 text-white" />
+              <Play className="h-5 w-5 text-white" />
             </Button>
             {/* Share Button */}
             <Button

@@ -10,7 +10,7 @@ import { MasonrySkeleton } from "@/components/skeletons/masonry-skeleton"
 import type { Pin } from "../../types/pin"
 import { PinCard } from "@/components/pin/pin-card"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { DiscoveryOrb } from "@/components/ai/discovery-orb"
+// import { DiscoveryOrb } from "@/components/ai/discovery-orb"
 import { AppLayout } from "@/components/layout/app-layout"
 import { AuthGuard } from "@/components/auth/auth-guard"
 
@@ -187,11 +187,11 @@ function HomePageContent() {
       </div>
 
       {/* Floating AI Discovery orb uses current q/lang/tags to suggest pins (mock) */}
-      <DiscoveryOrb 
+      {/* <DiscoveryOrb 
         q={q} 
         lang={searchParams.get("lang") ?? "all"} 
-        tags={searchParams.get("tags")?.split(",").filter(Boolean) || []} 
-      />
+        tags={searchParams.get("tags")?.split(",").filter(Boolean) || []}
+      /> */}
     </AppLayout>
   )
 }

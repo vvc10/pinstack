@@ -97,25 +97,41 @@ export default function YourPinsPage() {
 
   return (
     <AppLayout currentTab="yourpins">
-      <div className="container mx-auto px-4 py-6">
+      <div className="w-full mx-auto px-4 py-6">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Your Pins</h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-3xl font-bold text-foreground">Your Pins</h1>
+            <div className="flex items-center bg-muted rounded-lg p-1">
+              <button
+                onClick={() => setActiveTab("created")}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center gap-1.5 ${
+                  activeTab === "created"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <User className="w-3.5 h-3.5" />
+                Created ({createdPins.length})
+              </button>
+              <button
+                onClick={() => setActiveTab("saved")}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors flex items-center gap-1.5 ${
+                  activeTab === "saved"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Bookmark className="w-3.5 h-3.5" />
+                Saved ({savedPins.length})
+              </button>
+            </div>
+          </div>
           <p className="text-muted-foreground">
             Manage your created pins and view your saved collection
           </p>
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="created" className="flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Created by you ({createdPins.length})
-            </TabsTrigger>
-            <TabsTrigger value="saved" className="flex items-center gap-2">
-              <Bookmark className="w-4 h-4" />
-              Saved pins ({savedPins.length})
-            </TabsTrigger>
-          </TabsList>
 
           <TabsContent value="created" className="space-y-6">
             {createdPins.length === 0 ? (

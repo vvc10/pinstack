@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { Info } from "lucide-react"
+import { Info, X } from "lucide-react"
 
 interface CreditsBadgeProps {
   credits: string
@@ -15,14 +15,16 @@ export function CreditsBadge({ credits, className }: CreditsBadgeProps) {
       variant="secondary" 
       className={`text-xs px-2 py-1 rounded-full bg-muted text-muted-foreground flex items-center gap-1 ${className || ''}`}
     >
-      Credit: {credits}
-      <Tooltip>
+       <Tooltip>
         <TooltipTrigger asChild>
           <button
             onClick={() => window.open('https://x.com/pankajstwt', '_blank')}
-            className="hover:bg-muted-foreground/20 rounded-full p-0.5 transition-colors"
+            className="hover:bg-muted-foreground/0 rounded-full p-0.5 transition-colors"
           >
-            <Info className="h-3 w-3" />
+                Credit: {credits} 
+       {/* <span className="text-xs bg-zinc-950 text-white rounded-sm px-1 py-0">𝕏</span> */}
+    
+
           </button>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs">

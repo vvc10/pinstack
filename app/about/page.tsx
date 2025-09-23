@@ -3,12 +3,10 @@
 import { useEffect } from 'react'
 
 export default function AboutPage() {
-  // Set dark mode as default if no theme is set
+  // Force dark mode for about page
   useEffect(() => {
-    // Only add dark mode if no theme is already set
-    if (!document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light')) {
-      document.documentElement.classList.add('dark');
-    }
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
   }, []);
 
   return (

@@ -5,7 +5,7 @@ export default function TermsPage() {
         {/* Header with Logo */}
         <div className="flex items-center gap-3 mb-8">
           <div className="h-8 w-8 rounded-xl bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-lg">P.</span>
+            <span className="text-primary-foreground font-bold text-lg">Ps.</span>
           </div>
           <span className="font-bold text-xl">Pinstack</span>
         </div>
