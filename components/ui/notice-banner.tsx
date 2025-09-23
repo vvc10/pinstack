@@ -43,7 +43,7 @@ export function NoticeBanner({
   }
 
   return (
-    <div className={`w-full border rounded-xl px-4 py-3 flex items-center justify-between gap-3 ${variantStyles[variant]}`}>
+    <div className={`w-auto border rounded-xl mx-6 mb-2 px-4 py-3 flex items-center justify-between gap-3 ${variantStyles[variant]}`}>
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <Icon className="h-4 w-4 flex-shrink-0" />
         <span className="text-sm font-medium truncate">{message}</span>

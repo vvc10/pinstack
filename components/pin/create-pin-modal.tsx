@@ -73,22 +73,18 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
     }
     
     try {
-      // Parse tags from comma-separated string and add component type
+      // Parse tags from comma-separated string (user tags only)
       const tags = formData.tags
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0)
-      
-      // Add component type to tags if selected and not "all"
-      if (formData.componentType && formData.componentType !== "all") {
-        tags.push(formData.componentType)
-      }
 
       const pinData = {
         title: formData.title,
         description: formData.description || undefined,
         code: formData.code,
         language: formData.languages.join(", "),
+        component_type: formData.componentType !== "all" ? formData.componentType : undefined,
         tags: tags,
         image_url: formData.image || formData.url || undefined,
         url: formData.url || undefined,

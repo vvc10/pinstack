@@ -3,6 +3,7 @@
 import { useState, ReactNode } from "react"
 import { BoardsSidebar, SidebarProvider, useSidebar } from "@/components/board/boards-sidebar"
 import { Header } from "./header"
+import { MobileBottomNav } from "./mobile-bottom-nav"
 import { useNoticeBanner } from "@/contexts/notice-banner-context"
 
 interface AppLayoutProps {
@@ -46,14 +47,19 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
             <div 
               className="transition-all duration-300 ease-in-out"
               style={{
-                paddingTop: isNoticeBannerVisible ? '6rem' : '3rem'
+                paddingTop: isNoticeBannerVisible ? '5rem' : '1.5rem'
               }}
             >
-              {children}
+              <div className="mt-10 sm:mt-10 md:mt-2 pb-20 md:pb-0">
+                {children}
+              </div>
             </div>
           </div>
         </div>
       </section>
+      
+      {/* Mobile Bottom Navigation */}
+      <MobileBottomNav currentTab={currentTab} />
     </main>
   )
 }

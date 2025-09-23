@@ -55,13 +55,11 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
           params.delete("q")
         }
 
-        // Only auto-navigate to home page if we're already on the home page
-        // This prevents redirecting from other pages like /boards
-        if (pathname === "/") {
-          const newUrl = `/?${params.toString()}`
-          if (searchParams.toString() !== params.toString()) {
-            router.push(newUrl)
-          }
+        // Navigate to home page with search params
+        const newUrl = `/home?${params.toString()}`
+        
+        if (searchParams.toString() !== params.toString()) {
+          router.push(newUrl)
         }
       }
     }, 500) // 500ms debounce
@@ -119,7 +117,9 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                 placeholder="Search pins, tags, languages..."
                 className="w-full pl-12 pr-16 py-3 rounded-2xl border border-border bg-zinc-100 dark:bg-zinc-800 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/0 focus:border-primary/0 transition-all duration-200"
                 value={q}
-                onChange={(e) => setQ(e.target.value)}
+                onChange={(e) => {
+                  setQ(e.target.value)
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
@@ -129,7 +129,8 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                     } else {
                       params.delete("q")
                     }
-                    router.push(`/?${params.toString()}`)
+                    const newUrl = `/home?${params.toString()}`
+                    router.push(newUrl)
                   }
                 }}
               />
@@ -185,13 +186,13 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             </div>
           </div>
 
-          {/* All Buttons Grouped on Right Side */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          {/* Desktop Buttons - Hidden on Mobile */}
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
 
             {/* Add Button - Black with plus */}
             <Button
               size="icon"
-              className="w-10 h-10 rounded-2xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900  hover:bg-[#222] shadow-sm"
+              className="w-12 h-12 rounded-2xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900 hover:bg-[#222] shadow-sm"
               onClick={() => setCreateModalOpen(true)}
             >
               <Plus className="size-4 dark:text-zinc-900" />
@@ -201,7 +202,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             <Button
               variant="ghost"
               size="icon"
-              className="w-10 h-10 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+              className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
               onClick={() => setReelsModalOpen(true)}
             >
               <SquarePlay className="size-4" />
@@ -217,7 +218,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="w-10 h-10 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                    className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
                   >
                     <Avatar className="h-6 w-6 rounded-xl">
                       <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
@@ -251,7 +252,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               <Button
                 variant="ghost"
                 size="icon"
-                className="w-10 h-10 rounded-2xl border border-border hover:bg-zinc-100 dark:hover:bg-muted transition-all duration-200"
+                className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
                 asChild
               >
                 <Link href="/sign-in">
@@ -260,17 +261,105 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               </Button>
             )}
           </div>
+
+          {/* Mobile Hamburger Menu */}
+          <div className="md:hidden flex items-center">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-10 h-10 rounded-xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+          <PopoverContent className="w-auto rounded-2xl p-3" align="end">
+            <div className="flex items-center gap-3">
+              {/* Create Button - Black with plus */}
+              <Button
+                size="icon"
+                className="w-12 h-12 rounded-2xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900 hover:bg-[#222] shadow-sm"
+                onClick={() => setCreateModalOpen(true)}
+              >
+                <Plus className="size-4 dark:text-zinc-900" />
+              </Button>
+
+              {/* Reels Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                onClick={() => setReelsModalOpen(true)}
+              >
+                <SquarePlay className="size-4" />
+              </Button>
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
+              {/* User Authentication */}
+              {user ? (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                    >
+                      <Avatar className="h-6 w-6 rounded-xl">
+                        <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
+                        <AvatarFallback className="rounded-full">
+                          {user.email?.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 rounded-2xl" align="end">
+                    <div className="space-y-2">
+                      <div className="px-2 py-1.5">
+                        <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
+                        <p className="text-xs text-muted-foreground">{user.email}</p>
+                      </div>
+                      <div className="pt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="w-full justify-start rounded-xl text-center"
+                          onClick={() => signOut()}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign out
+                        </Button>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="w-12 h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                  asChild
+                >
+                  <Link href="/sign-in">
+                    <User className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
+            </div>
+          </PopoverContent>
+            </Popover>
+          </div>
         </div>
 
         {/* Notice Banner */}
-        <div className="container mx-auto px-6 py-2 flex flex-col items-start justify-start gap-2 max-w-full">
-          <NoticeBanner
-            message="New: Live preview feature 👀 - see your code, edit & see it in action!"
+           <NoticeBanner
+            message="New: Live preview feature 👀 - see your code, edit & see it in action!!"
             // icon={Megaphone}
             variant="info"
           />
-        </div>
-      </header>
+       </header>
 
       {/* Create Pin Modal */}
       <CreatePinModal open={createModalOpen} onOpenChange={setCreateModalOpen} />

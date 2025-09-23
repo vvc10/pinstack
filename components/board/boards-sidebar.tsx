@@ -159,8 +159,8 @@ export function BoardsSidebar({
     <aside aria-label="Sidebar" className={`h-full transition-all duration-300 z-[9999] ease-in-out ${
       isCollapsed ? 'w-16' : 'w-64'
     }`}>
-      {/* Collapse Toggle Button */}
-      <div className="absolute -right-3 top-6 z-[9999]">
+      {/* Collapse Toggle Button - Hidden on Mobile */}
+      <div className="absolute -right-3 top-6 z-[9999] hidden md:block">
         <Button
           variant="secondary"
           size="sm"

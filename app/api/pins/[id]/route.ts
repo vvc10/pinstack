@@ -18,6 +18,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         description,
         code,
         language,
+        component_type,
         tags,
         image_url,
         author_id,
@@ -66,6 +67,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       title: pin.title,
       description: pin.description,
       image: pin.image_url || '/placeholder.svg',
+      component_type: pin.component_type,
       tags: pin.tags || [],
       lang: pin.language,
       height: 300,
@@ -96,7 +98,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id: pinId } = await params
     const body = await req.json()
-    const { title, description, code, language, tags, image_url, credits } = body
+    const { title, description, code, language, component_type, tags, image_url, credits } = body
 
     console.log('Updating pin with data:', { pinId, title, description, code: code?.substring(0, 50) + '...', language, tags, image_url, credits })
 
@@ -146,6 +148,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         description: description || null,
         code,
         language,
+        component_type: component_type || null,
         tags: tags || [],
         image_url: image_url || null,
         credits: credits || null,

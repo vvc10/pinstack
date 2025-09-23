@@ -17,6 +17,7 @@ export function usePinOperations() {
     description?: string
     code: string
     language: string
+    component_type?: string
     tags: string[]
     image_url?: string
     credits?: string
@@ -57,6 +58,7 @@ export function usePinOperations() {
     description?: string
     code: string
     language: string
+    component_type?: string
     tags: string[]
     image_url?: string
     credits?: string

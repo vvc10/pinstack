@@ -1,32 +1,17 @@
 "use client"
 
-import Link from "next/link"
 import { useEffect, useMemo, useRef, useState } from "react"
 import useSWRInfinite from "swr/infinite"
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { MasonryPinterest } from "@/components/masonry-pinterest"
 import { MasonrySkeleton } from "@/components/skeletons/masonry-skeleton"
-import type { Pin } from "../../types/pin"
 import { PinCard } from "@/components/pin/pin-card"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-// import { DiscoveryOrb } from "@/components/ai/discovery-orb"
+import { FiltersBar } from "@/components/filters-bar"
 import { AppLayout } from "@/components/layout/app-layout"
 import { AuthGuard } from "@/components/auth/auth-guard"
-import { FiltersBar } from "@/components/filters-bar"
-
+import type { Pin } from "../../types/pin"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
-
-function useDebounced<T>(value: T, delay = 350) {
-  const [v, setV] = useState(value)
-  useEffect(() => {
-    const id = setTimeout(() => setV(value), delay)
-    return () => clearTimeout(id)
-  }, [value, delay])
-  return v
-}
-
 const PAGE_SIZE = 18
 
 function HomePageContent() {
@@ -35,89 +20,80 @@ function HomePageContent() {
   const searchParams = useSearchParams()
   const [mounted, setMounted] = useState(false)
 
-  const [q, setQ] = useState("")
+  // State management
+  const [searchQuery, setSearchQuery] = useState("")
   const [sort, setSort] = useState<"trending" | "most-voted" | "newest">("trending")
-  
-  // Filter state
-  const [lang, setLang] = useState<string>("all")
-  const [tags, setTags] = useState<string[]>([])
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
 
+  // Initialize state from URL params
   useEffect(() => {
     setMounted(true)
-    // Initialize state from search params after mounting
-    setQ(searchParams.get("q") ?? "")
-    setSort((searchParams.get("sort") as any) || "trending")
     
-    // Initialize filter state from URL params
-    setLang(searchParams.get("lang") ?? "all")
-    const t = searchParams.get("tags")
-    setTags(t ? t.split(",").filter(Boolean) : [])
-  }, [searchParams])
+    // Read URL params directly from window.location
+    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    const searchQuery = urlParams.get("q") ?? ""
+    const sortParam = urlParams.get("sort") as any || "trending"
+    const tagsParam = urlParams.get("category")
+    
+    setSearchQuery(searchQuery)
+    setSort(sortParam)
+    setSelectedTags(tagsParam ? tagsParam.split(",").filter(Boolean) : [])
+  }, [pathname, searchParams])
 
-  // Filter handler functions
-  const handleLangChange = (newLang: string) => {
-    setLang(newLang)
+  // Handle tag toggle
+  const handleTagToggle = (tag: string) => {
+    const newTags = selectedTags.includes(tag) 
+      ? selectedTags.filter(t => t !== tag)
+      : [...selectedTags, tag]
+    
+    setSelectedTags(newTags)
+    
+    // Update URL
     const params = new URLSearchParams(searchParams.toString())
-    if (newLang && newLang !== "all") {
-      params.set("lang", newLang)
+    if (newTags.length > 0) {
+      params.set("category", newTags.join(","))
     } else {
-      params.delete("lang")
+      params.delete("category")
     }
-    router.push(`/?${params.toString()}`)
+    
+    router.push(`/home?${params.toString()}`)
   }
 
-  const toggleTag = (t: string) => {
-    setTags((prev) => {
-      const newTags = prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
-      // Immediately update URL for tag changes
-      const params = new URLSearchParams(searchParams.toString())
-      if (newTags.length) {
-        params.set("tags", newTags.join(","))
-      } else {
-        params.delete("tags")
-      }
-      router.push(`/?${params.toString()}`)
-      return newTags
-    })
-  }
-
-  const clearFilters = () => {
-    setLang("all")
-    setTags([])
-    setQ("")
-    // Update URL to reflect cleared filters
+  // Handle clear all
+  const handleClearAll = () => {
+    setSelectedTags([])
+    setSearchQuery("")
+    
     const params = new URLSearchParams(searchParams.toString())
-    params.delete("lang")
-    params.delete("tags")
+    params.delete("category")
     params.delete("q")
-    router.push(`/?${params.toString()}`)
+    
+    router.push(`/home?${params.toString()}`)
   }
 
-  useEffect(() => {
-    const pin = searchParams.get("pin")
-    if (pin) {
-      router.replace(`/pin/${encodeURIComponent(pin)}`)
-    }
-  }, [router, searchParams])
-
+  // Generate API key for SWR
   const getKey = (index: number, previousPageData: any) => {
     if (previousPageData && !previousPageData.nextCursor) return null
+    
     const cursor = previousPageData ? previousPageData.nextCursor : 0
     const params = new URLSearchParams({
       cursor: String(cursor),
       limit: String(PAGE_SIZE),
     })
     
-    // Get filter values from URL params
-    const urlQ = searchParams.get("q")
-    const urlLang = searchParams.get("lang")
-    const urlTags = searchParams.get("tags")
-    const urlSort = searchParams.get("sort")
+    // Check URL directly on every call
+    const urlParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '')
+    const urlSearchQuery = urlParams.get("q") ?? ""
     
-    if (urlQ) params.set("q", urlQ)
-    if (urlLang && urlLang !== "all") params.set("lang", urlLang)
-    if (urlTags) params.set("tags", urlTags)
-    if (urlSort) params.set("sort", urlSort)
+    // Use URL search query if available, otherwise use state
+    const effectiveSearchQuery = urlSearchQuery || searchQuery
+    
+    // Add search query
+    if (effectiveSearchQuery) {
+      params.set("q", effectiveSearchQuery)
+    }
+    if (selectedTags.length > 0) params.set("category", selectedTags.join(","))
+    if (sort) params.set("sort", sort)
     
     return `/api/pins?${params.toString()}`
   }
@@ -126,28 +102,29 @@ function HomePageContent() {
     revalidateFirstPage: false,
   })
 
+  // Reset to first page when filters change
   useEffect(() => {
     setSize(1)
     mutate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [q, sort])
+  }, [searchQuery, sort, selectedTags, setSize, mutate])
 
-  useEffect(() => {
-    const urlQ = searchParams.get("q") ?? ""
-    const urlSort = (searchParams.get("sort") as "trending" | "most-voted" | "newest") || "trending"
-    if (urlQ !== q) setQ(urlQ)
-    if (urlSort !== sort) setSort(urlSort)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams])
+  const items: Pin[] = useMemo(() => 
+    data ? data.flatMap((p: any) => p.items as Pin[]) : [], 
+    [data]
+  )
+  
+  const hasMore = useMemo(() => 
+    Boolean(data?.[data.length - 1]?.nextCursor), 
+    [data]
+  )
 
-  const items: Pin[] = useMemo(() => (data ? data.flatMap((p: any) => p.items as Pin[]) : []), [data])
-  const hasMore = useMemo(() => Boolean(data?.[data.length - 1]?.nextCursor), [data])
-
+  // Infinite scroll
   const loadMoreRef = useRef<HTMLDivElement | null>(null)
   useEffect(() => {
     if (!hasMore) return
     const node = loadMoreRef.current
     if (!node) return
+    
     const observer = new IntersectionObserver((entries) => {
       const first = entries[0]
       if (first.isIntersecting) {
@@ -156,74 +133,59 @@ function HomePageContent() {
     })
     observer.observe(node)
     return () => observer.disconnect()
-  }, [hasMore, setSize, loadMoreRef])
+  }, [hasMore, setSize])
 
   const isInitialLoading = !data && !error
 
   if (!mounted) {
     return (
       <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
-        <div className="min-w-0">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-balance">Discover Developer Pins</h1>
-          </div>
-          <div className="mb-5 overflow-hidden">
-            <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
-          </div>
+        <div className="space-y-6">
+          <div className="h-8 bg-muted rounded animate-pulse"></div>
           <MasonrySkeleton />
-
         </div>
-
       </AppLayout>
     )
   }
 
   return (
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
-      <div>
-        <div className="min-w-0" data-content-area>
-          {error && <p className="text-sm text-destructive">Failed to load pins. Please try again.</p>}
+      <div className="space-y-6">
+        {/* Filter Bar */}
+        <FiltersBar
+          selectedTags={selectedTags}
+          onTagToggle={handleTagToggle}
+          onClearAll={handleClearAll}
+        />
 
-          {/* Filter Bar */}
-          <div className="mb-5 overflow-hidden">
-            <FiltersBar
-              lang={lang}
-              onLangChange={handleLangChange}
-              tags={tags}
-              onToggleTag={toggleTag}
-              onClear={clearFilters}
-            />
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-8">
+            <p className="text-sm text-destructive">Failed to load pins. Please try again.</p>
           </div>
+        )}
 
-          {isInitialLoading ? (
-            <MasonrySkeleton items={12} />
-          ) : (
+        {/* Loading State */}
+        {isInitialLoading ? (
+          <MasonrySkeleton items={12} />
+        ) : (
+          <>
+            {/* Results */}
             <MasonryPinterest
               items={items}
               renderItem={(pin) => (
                 <PinCard
                   pin={pin}
                   onTagClick={(tag) => {
-                    const currentTags = searchParams.get("tags")?.split(",").filter(Boolean) || []
-                    if (!currentTags.includes(tag)) {
-                      const newTags = [...currentTags, tag]
-                      const params = new URLSearchParams(searchParams.toString())
-                      params.set("tags", newTags.join(","))
-                      router.push(`/?${params.toString()}`)
+                    if (!selectedTags.includes(tag)) {
+                      handleTagToggle(tag)
                     }
                   }}
                   onLangClick={(lang) => {
-                    const params = new URLSearchParams(searchParams.toString())
-                    if (lang === "all") {
-                      params.delete("lang")
-                    } else {
-                      params.set("lang", lang)
-                    }
-                    router.push(`/?${params.toString()}`)
+                    // Language filtering removed as requested
                   }}
                 />
               )}
-              className="mt-2"
               gap={16}
               columns={{
                 mobile: 1,
@@ -232,26 +194,25 @@ function HomePageContent() {
                 xl: 4
               }}
             />
-          )}
-          <div ref={loadMoreRef} className="h-8" aria-hidden />
-          <div className="flex items-center justify-center py-6">
-            {isValidating && (
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="inline-block h-2 w-2 rounded-full bg-primary animate-pulse" />
-                Loading more pins...
-              </div>
-            )}
-            {!hasMore && !isValidating && <p className="text-sm text-muted-foreground">You&apos;re all caught up.</p>}
-          </div>
-        </div>
-      </div>
 
-      {/* Floating AI Discovery orb uses current q/lang/tags to suggest pins (mock) */}
-      {/* <DiscoveryOrb 
-        q={q} 
-        lang={searchParams.get("lang") ?? "all"} 
-        tags={searchParams.get("tags")?.split(",").filter(Boolean) || []}
-      /> */}
+            {/* Load More Trigger */}
+            <div ref={loadMoreRef} className="h-8" aria-hidden />
+            
+            {/* Loading More Indicator */}
+            <div className="flex items-center justify-center py-6">
+              {isValidating && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="inline-block h-2 w-2 rounded-full bg-primary animate-pulse" />
+                  Loading more pins...
+                </div>
+              )}
+              {!hasMore && !isValidating && (
+                <p className="text-sm text-muted-foreground">You're all caught up.</p>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </AppLayout>
   )
 }

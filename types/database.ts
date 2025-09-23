@@ -44,6 +44,7 @@ export interface Pin {
   description?: string
   code: string
   language: string
+  component_type?: string
   tags: string[]
   image_url?: string
   video_url?: string

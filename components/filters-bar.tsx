@@ -2,121 +2,92 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select"
 
-const LANGS = ["all", "javascript", "typescript", "python", "css", "go", "rust", "sql"]
-const TAGS = [
-  // Component Categories
+// Exact component types from create pin modal
+const COMPONENT_TYPES = [
   "Hero", "Footer", "Navigation", "Sidebar", "Header", 
   "Carousel", "Slider", "Cards", "Accordions", "Tabs", "Modals / Dialogs",
   "Dropdowns", "Tooltips / Popovers", "Forms",
-  "Search Bars", "Tables","Grids", "Pagination", 
-  "Buttons", "Alerts",  "Toasts","Badges", "Tags", "Chips",
+  "Search Bars", "Tables", "Grids", "Pagination", 
+  "Buttons", "Alerts", "Toasts", "Badges", "Tags", "Chips",
   "dashboard", "landing", "pricing", "faq", "dark-mode", "minimal", "tailwind", "react"
 ]
+
 const MAX_VISIBLE_TAGS = 8
 
-export type FiltersState = {
-  lang: string
-  tags: string[]
-  sort: "trending" | "most-voted" | "newest"
+interface FiltersBarProps {
+  selectedTags: string[]
+  onTagToggle: (tag: string) => void
+  onClearAll: () => void
 }
 
-export function FiltersBar({
-  lang,
-  onLangChange,
-  tags,
-  onToggleTag,
-  onClear,
-}: {
-  lang: string
-  onLangChange: (v: string) => void
-  tags: string[]
-  onToggleTag: (tag: string) => void
-  onClear: () => void
-}) {
+export function FiltersBar({ selectedTags, onTagToggle, onClearAll }: FiltersBarProps) {
   const [showAllTags, setShowAllTags] = useState(false)
   
-  const visibleTags = showAllTags ? TAGS : TAGS.slice(0, MAX_VISIBLE_TAGS)
-  const remainingCount = TAGS.length - MAX_VISIBLE_TAGS
+  const visibleTags = showAllTags ? COMPONENT_TYPES : COMPONENT_TYPES.slice(0, MAX_VISIBLE_TAGS)
+  const remainingCount = COMPONENT_TYPES.length - MAX_VISIBLE_TAGS
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2 transition-all duration-300 ease-in-out">
-            {visibleTags.map((t, index) => {
-              const active = tags.includes(t)
-              return (
-                <Button
-                  key={t}
-                  size="sm"
-                  variant={active ? "default" : "secondary"}
-                  onClick={() => onToggleTag(t)}
-                  aria-pressed={active}
-                  className="text-xs flex-shrink-0 transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 dark:bg-muted dark:hover:bg-secondary dark:text-foreground dark:hover:text-foreground dark:active:bg-primary/50 dark:focus:bg-primary/50"
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                    animation: showAllTags ? 'fadeInUp 0.3s ease-out forwards' : 'none'
-                  }}
-                >
-                  {t}
-                </Button>
-              )
-            })}
-            
-            {!showAllTags && remainingCount > 0 && (
+    <div className="space-y-3">
+      {/* Component Types */}
+      <div className="space-y-2">
+         <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:overflow-x-visible md:pb-0">
+          {visibleTags.map((tag) => {
+            const isSelected = selectedTags.includes(tag)
+            return (
               <Button
-              size="sm"
-              variant="ghost"
-                onClick={() => setShowAllTags(true)}
-                className="text-xs flex-shrink-0 text-foreground hover:text-foreground dark:text-foreground dark:hover:text-foreground cursor-pointer  hover:bg-transparent dark:hover:bg-transparent transition-all duration-200 ease-in-out hover:scale-105 active:scale-95"
-             
-               >
-                +{remainingCount}
-              </Button>
-            )}
-            
-            {showAllTags && (
-              <Button
+                key={tag}
+                variant={isSelected ? "default" : "outline"}
                 size="sm"
-                variant="ghost"
-                onClick={() => setShowAllTags(false)}
-                className="text-xs flex-shrink-0 text-foreground hover:text-foreground dark:text-foreground dark:hover:text-foreground hover:bg-transparent dark:hover:bg-transparent transition-all cursor-pointer duration-200 ease-in-out hover:scale-105 active:scale-95"
-                >
-                Show less
+                onClick={() => onTagToggle(tag)}
+                className={`text-xs rounded-xl transition-all cursor-pointer flex-shrink-0 ${
+                  isSelected 
+                    ? "bg-primary/80 text-primary-foreground shadow-sm" 
+                    : "hover:bg-zinc-400 dark:hover:bg-zinc-600"
+                }`}
+              >
+                {tag}
               </Button>
-            )}
-          </div>
-        </div>
-        
-        {tags.length > 0 && (
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onClear} 
-              aria-label="Clear filters" 
-              className="text-xs transition-all duration-200 ease-in-out hover:scale-105 active:scale-95 hover:bg-destructive/10 hover:text-destructive"
+            )
+          })}
+          
+          {!showAllTags && remainingCount > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllTags(true)}
+              className="text-xs rounded-xl text-muted-foreground hover:bg-transparent hover:text-zinc-600 dark:hover:bg-transparent dark:hover:text-zinc-400 cursor-pointer flex-shrink-0"
             >
-              Clear all
+              +{remainingCount} more
             </Button>
-          </div>
-        )}
+          )}
+          
+          {showAllTags && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowAllTags(false)}
+              className="text-xs rounded-xl text-muted-foreground hover:bg-transparent hover:text-zinc-600 dark:hover:bg-transparent dark:hover:text-zinc-400 cursor-pointer flex-shrink-0"
+            >
+              Show less
+            </Button>
+          )}
+        </div>
       </div>
-      
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
+
+      {/* Clear All Button */}
+      {selectedTags.length > 0 && (
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClearAll}
+            className="text-xs rounded-xl text-muted-foreground hover:bg-transparent hover:text-zinc-600 dark:hover:bg-transparent dark:hover:text-zinc-400 cursor-pointer"
+            >
+            Clear all ({selectedTags.length})
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

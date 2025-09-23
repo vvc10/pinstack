@@ -4,21 +4,17 @@ import type { Pin } from "@/types/pin"
 
 export async function GET(req: NextRequest) {
   try {
-  const { searchParams } = new URL(req.url)
-  const cursorParam = searchParams.get("cursor")
-  const limitParam = searchParams.get("limit")
+    const { searchParams } = new URL(req.url)
+    const cursorParam = searchParams.get("cursor")
+    const limitParam = searchParams.get("limit")
     const q = searchParams.get("q") || ""
-    const langFilter = searchParams.get("lang") || ""
-    const tagsParam = searchParams.get("tags") || ""
     const sortParam = searchParams.get("sort") || "trending"
+    const tagsParam = searchParams.get("category")
 
-    // Debug logging
-    console.log('🔍 Search API called with:', { q, langFilter, tagsParam, sortParam, cursorParam, limitParam })
+    const limit = Math.max(1, Math.min(30, Number(limitParam) || 18))
+    const offset = Math.max(0, Number(cursorParam) || 0)
 
-  const limit = Math.max(1, Math.min(30, Number(limitParam) || 18))
-  const offset = Math.max(0, Number(cursorParam) || 0)
-
-              const supabase = await getSupabaseServer()
+    const supabase = await getSupabaseServer()
 
     // Build the query
     let query = supabase
@@ -29,6 +25,7 @@ export async function GET(req: NextRequest) {
         description,
         code,
         language,
+        component_type,
         tags,
         image_url,
         url,
@@ -45,31 +42,35 @@ export async function GET(req: NextRequest) {
       `)
       .eq('status', 'published')
 
-    // Apply language filter
-    if (langFilter && langFilter !== "all") {
-      query = query.eq('language', langFilter)
-    }
-
-
-    // Apply search query - search across title, description, code, and language
+    // Apply search query - component_type AND title with word-based search
     if (q) {
-      // Create search conditions for different fields
-      const searchConditions = [
-        `title.ilike.%${q}%`,
-        `description.ilike.%${q}%`, 
-        `code.ilike.%${q}%`,
-        `language.ilike.%${q}%`
-      ]
+      console.log('🔍 Search query received:', q)
       
-      console.log('🔍 Search conditions:', searchConditions)
-      query = query.or(searchConditions.join(','))
+      // Split query into individual words
+      const words = q.trim().split(/\s+/).filter(word => word.length > 0)
+      console.log('🔍 Search words:', words)
+      
+      if (words.length > 0) {
+        const searchConditions: string[] = []
+        
+        // For each word, create search conditions for component_type, title, and language
+        words.forEach(word => {
+          searchConditions.push(`component_type.ilike.%${word}%`)
+          searchConditions.push(`title.ilike.%${word}%`)
+          searchConditions.push(`language.ilike.%${word}%`)
+        })
+        
+        query = query.or(searchConditions.join(','))
+        console.log('🔍 Search conditions:', searchConditions)
+      }
     }
 
-    // Apply tags filter
+    // Apply tag filtering
     if (tagsParam) {
-      const tags = tagsParam.split(",").filter(Boolean)
-      if (tags.length > 0) {
-        query = query.overlaps('tags', tags)
+      const componentTypes = tagsParam.split(",").filter(Boolean)
+      if (componentTypes.length > 0) {
+        query = query.in('component_type', componentTypes)
+        console.log('🏷️ Tag filtering:', { componentTypes })
       }
     }
 
@@ -98,11 +99,13 @@ export async function GET(req: NextRequest) {
       return Response.json({ items: [], nextCursor: null }, { status: 500 })
     }
 
-    console.log('🔍 Query results:', { 
+    console.log('🔍 Search results:', { 
       totalPins: pins?.length || 0, 
       searchQuery: q,
-      sampleTitles: pins?.slice(0, 3).map(p => p.title) || []
+      sampleTitles: pins?.slice(0, 3).map(p => p.title) || [],
+      allTitles: pins?.map(p => p.title) || []
     })
+
 
     // Transform database pins to match frontend Pin type
     const items: Pin[] = (pins || []).map((pin: any) => ({
@@ -112,6 +115,7 @@ export async function GET(req: NextRequest) {
       image: pin.image_url || '/placeholder.svg',
       url: pin.url,
       figma_code: pin.figma_code,
+      component_type: pin.component_type,
       tags: pin.tags || [],
       lang: pin.language,
       height: 300, // Default height, could be calculated based on code length
@@ -140,7 +144,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { title, description, code, language, tags, image_url, url, figma_code, credits } = body
+    const { title, description, code, language, component_type, tags, image_url, url, figma_code, credits } = body
 
     console.log('Creating pin with data:', { title, description, code: code?.substring(0, 50) + '...', language, tags, image_url })
 
@@ -200,6 +204,7 @@ export async function POST(req: NextRequest) {
         description: description || null,
         code,
         language,
+        component_type: component_type || null,
         tags: tags || [],
         image_url: image_url || null,
         url: url || null,

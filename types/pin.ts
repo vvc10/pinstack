@@ -5,6 +5,7 @@ export type Pin = {
   image: string
   url?: string
   figma_code?: string
+  component_type?: string
   tags: string[]
   lang: string
   height: number

@@ -13,7 +13,7 @@ const NOTICE_BANNER_KEY = "pinstack-notice-banner-dismissed"
 const NOTICE_BANNER_VERSION_KEY = "pinstack-notice-banner-version"
 
 // Update this version when you want to show the banner again after content changes
-const CURRENT_BANNER_VERSION = "1.0.4"
+const CURRENT_BANNER_VERSION = "1.0.6"
 
 export function NoticeBannerProvider({ children }: { children: ReactNode }) {
   const [isVisible, setIsVisible] = useState(true)
@@ -43,6 +43,11 @@ export function NoticeBannerProvider({ children }: { children: ReactNode }) {
         setIsVisible(true)
         // Update the version in localStorage to current version
         localStorage.setItem(NOTICE_BANNER_VERSION_KEY, CURRENT_BANNER_VERSION)
+        // If version changed, also clear the dismissed state so banner shows again
+        if (savedVersion !== CURRENT_BANNER_VERSION) {
+          localStorage.removeItem(NOTICE_BANNER_KEY)
+          console.log("Version changed - cleared dismissed state")
+        }
         console.log("Banner will be visible")
       } else {
         console.log("Setting banner to hidden - dismissed and same version")

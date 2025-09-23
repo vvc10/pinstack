@@ -268,7 +268,7 @@ export function PinCard({
                 }}
                 aria-label="Edit pin"
               >
-                <Edit className="h-5 w-5 text-white" />
+                <Edit className="h-5 w-5 text-zinc-300" />
               </button>
             )}
 
@@ -284,7 +284,7 @@ export function PinCard({
               }}
               aria-label="Live Preview"
             >
-              <Play className="h-5 w-5 text-white" />
+              <Play className="h-5 w-5 text-zinc-300" />
             </Button>
             {/* Share Button */}
             <Button
@@ -297,7 +297,7 @@ export function PinCard({
               }}
               aria-label="Share"
             >
-              <Forward className="h-5 w-5 text-white" />
+              <Forward className="h-5 w-5 text-zinc-300" />
             </Button>
     {/* Like Button */}
     <Button
@@ -311,7 +311,7 @@ export function PinCard({
               }}
               aria-label="Like"
             >
-              <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-white'}`} />
+              <Heart className={`h-5 w-5 ${isLiked ? 'text-red-500 fill-red-500' : 'text-zinc-300'}`} />
             </Button>
 
           </div>

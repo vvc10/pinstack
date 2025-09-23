@@ -54,19 +54,26 @@ export function EditPinModal({ open, onOpenChange, pin }: EditPinModalProps) {
     if (pin) {
       console.log('Edit modal received pin:', pin)
       
-      // Extract component type from tags
-      const componentTypes = [
-        "Hero", "Footer", "Navigation", "Sidebar", "Header", 
-        "Carousel", "Slider", "Cards", "Accordions", "Tabs", "Modals / Dialogs",
-        "Dropdowns", "Tooltips / Popovers", "Forms",
-        "Search Bars", "Tables", "Grids", "Pagination", 
-        "Buttons", "Alerts", "Toasts", "Badges", "Tags", "Chips",
-        "dashboard", "landing", "pricing", "faq", "dark-mode", "minimal", "tailwind", "react"
-      ]
+      // Use component_type field directly if available, otherwise extract from tags
+      let componentType = pin.component_type || ""
       
-      const pinTags = pin.tags || []
-      const foundType = componentTypes.find(type => pinTags.includes(type))
-      const otherTags = pinTags.filter(tag => !componentTypes.includes(tag))
+      // Fallback: extract component type from tags for existing pins
+      if (!componentType && pin.tags) {
+        const componentTypes = [
+          "Hero", "Footer", "Navigation", "Sidebar", "Header", 
+          "Carousel", "Slider", "Cards", "Accordions", "Tabs", "Modals / Dialogs",
+          "Dropdowns", "Tooltips / Popovers", "Forms",
+          "Search Bars", "Tables", "Grids", "Pagination", 
+          "Buttons", "Alerts", "Toasts", "Badges", "Tags", "Chips",
+          "dashboard", "landing", "pricing", "faq", "dark-mode", "minimal", "tailwind", "react"
+        ]
+        
+        const pinTags = pin.tags || []
+        componentType = componentTypes.find(type => pinTags.includes(type)) || ""
+      }
+      
+      // User tags are all tags except component type
+      const userTags = pin.tags ? pin.tags.filter(tag => tag !== componentType) : []
       
       setFormData({
         title: pin.title || "",
@@ -75,8 +82,8 @@ export function EditPinModal({ open, onOpenChange, pin }: EditPinModalProps) {
         figma_code: pin.figma_code || "",
         code: pin.code || "",
         languages: pin.lang ? pin.lang.split(", ").filter(Boolean) : [],
-        componentType: foundType || "",
-        tags: otherTags.join(", "),
+        componentType: componentType,
+        tags: userTags.join(", "),
         description: pin.description || "",
         credits: pin.credits || ""
       })
@@ -89,23 +96,18 @@ export function EditPinModal({ open, onOpenChange, pin }: EditPinModalProps) {
     if (!pin) return
     
     try {
-      // Parse tags from comma-separated string and add component type
+      // Parse tags from comma-separated string (user tags only)
       const tags = formData.tags
         .split(',')
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0)
-      
-      // Add component type to tags if selected and not "all"
-      if (formData.componentType && formData.componentType !== "all") {
-        tags.push(formData.componentType)
-      }
-
 
       const pinData = {
         title: formData.title,
         description: formData.description || undefined,
         code: formData.code,
         language: formData.languages.join(", "),
+        component_type: formData.componentType !== "all" ? formData.componentType : undefined,
         tags: tags,
         image_url: formData.image || formData.url || undefined,
         url: formData.url || undefined,
@@ -312,7 +314,7 @@ export function EditPinModal({ open, onOpenChange, pin }: EditPinModalProps) {
                 onChange={(e) => handleInputChange("tags", e.target.value)}
               />
               <p className="text-sm text-muted-foreground">
-                Separate tags with commas. Component type will be automatically added.
+                Separate tags with commas. These are user-defined tags separate from the component type above.
               </p>
             </div>
 
