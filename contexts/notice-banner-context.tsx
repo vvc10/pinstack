@@ -13,7 +13,7 @@ const NOTICE_BANNER_KEY = "pinstack-notice-banner-dismissed"
 const NOTICE_BANNER_VERSION_KEY = "pinstack-notice-banner-version"
 
 // Update this version when you want to show the banner again after content changes
-const CURRENT_BANNER_VERSION = "1.0.3"
+const CURRENT_BANNER_VERSION = "1.0.4"
 
 export function NoticeBannerProvider({ children }: { children: ReactNode }) {
   const [isVisible, setIsVisible] = useState(true)

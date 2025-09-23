@@ -46,7 +46,7 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
             <div 
               className="transition-all duration-300 ease-in-out"
               style={{
-                paddingTop: isNoticeBannerVisible ? '12rem' : '7rem'
+                paddingTop: isNoticeBannerVisible ? '6rem' : '3rem'
               }}
             >
               {children}

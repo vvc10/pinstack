@@ -13,6 +13,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 // import { DiscoveryOrb } from "@/components/ai/discovery-orb"
 import { AppLayout } from "@/components/layout/app-layout"
 import { AuthGuard } from "@/components/auth/auth-guard"
+import { FiltersBar } from "@/components/filters-bar"
 
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
@@ -36,13 +37,61 @@ function HomePageContent() {
 
   const [q, setQ] = useState("")
   const [sort, setSort] = useState<"trending" | "most-voted" | "newest">("trending")
+  
+  // Filter state
+  const [lang, setLang] = useState<string>("all")
+  const [tags, setTags] = useState<string[]>([])
 
   useEffect(() => {
     setMounted(true)
     // Initialize state from search params after mounting
     setQ(searchParams.get("q") ?? "")
     setSort((searchParams.get("sort") as any) || "trending")
+    
+    // Initialize filter state from URL params
+    setLang(searchParams.get("lang") ?? "all")
+    const t = searchParams.get("tags")
+    setTags(t ? t.split(",").filter(Boolean) : [])
   }, [searchParams])
+
+  // Filter handler functions
+  const handleLangChange = (newLang: string) => {
+    setLang(newLang)
+    const params = new URLSearchParams(searchParams.toString())
+    if (newLang && newLang !== "all") {
+      params.set("lang", newLang)
+    } else {
+      params.delete("lang")
+    }
+    router.push(`/?${params.toString()}`)
+  }
+
+  const toggleTag = (t: string) => {
+    setTags((prev) => {
+      const newTags = prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]
+      // Immediately update URL for tag changes
+      const params = new URLSearchParams(searchParams.toString())
+      if (newTags.length) {
+        params.set("tags", newTags.join(","))
+      } else {
+        params.delete("tags")
+      }
+      router.push(`/?${params.toString()}`)
+      return newTags
+    })
+  }
+
+  const clearFilters = () => {
+    setLang("all")
+    setTags([])
+    setQ("")
+    // Update URL to reflect cleared filters
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete("lang")
+    params.delete("tags")
+    params.delete("q")
+    router.push(`/?${params.toString()}`)
+  }
 
   useEffect(() => {
     const pin = searchParams.get("pin")
@@ -134,6 +183,17 @@ function HomePageContent() {
       <div>
         <div className="min-w-0" data-content-area>
           {error && <p className="text-sm text-destructive">Failed to load pins. Please try again.</p>}
+
+          {/* Filter Bar */}
+          <div className="mb-5 overflow-hidden">
+            <FiltersBar
+              lang={lang}
+              onLangChange={handleLangChange}
+              tags={tags}
+              onToggleTag={toggleTag}
+              onClear={clearFilters}
+            />
+          </div>
 
           {isInitialLoading ? (
             <MasonrySkeleton items={12} />
