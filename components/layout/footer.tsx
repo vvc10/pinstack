@@ -8,12 +8,13 @@ interface FooterProps {
 
 export function Footer({ currentPage }: FooterProps) {
   return (
-    <footer className="relative border-t bg-background/50">
+ 
+    <footer className="relative w-full mx-auto max-w-6xl border border-zinc-800 rounded-2xl sm:rounded-3xl flex items-center justify-center overflow-hidden mt-4 mb-4 md:mt-6 md:mb-6">
       <div className="relative z-10 container mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-6">
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary font-bold rounded-lg flex items-center justify-center text-sm sm:text-base text-primary-foreground">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 bg-primary font-garamond font-normal rounded-lg flex items-center justify-center text-sm sm:text-base text-primary-foreground">
                 Ps.
               </div>
               <span className="font-semibold text-base sm:text-lg">pinstack</span>

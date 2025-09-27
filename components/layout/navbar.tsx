@@ -13,8 +13,8 @@ export function Navbar({ currentPage }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
-    <div className="sticky top-0 z-50 px-4 sm:px-0 py-3 sm:py-6">
-      <header className="w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] mx-auto border-b bg-gradient-to-r from-background/80 via-background/90 to-background/80 backdrop-blur-md rounded-2xl shadow-sm">
+    <div className=" fixed top-8 w-full mx-auto z-50 px-4 sm:px-0 py-3 sm:py-6">
+      <header className="w-full sm:w-[90%] md:w-[95%] lg:w-[70%] xl:w-[60%] mx-auto border bg-gradient-to-r from-background/80 via-background/90 to-background/80 backdrop-blur-md rounded-2xl shadow-sm">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3 md:py-4">
           <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
@@ -33,7 +33,7 @@ export function Navbar({ currentPage }: NavbarProps) {
             </Button>
             
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary font-bold rounded-lg flex items-center justify-center text-sm sm:text-base text-primary-foreground">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary font-garamond font-normal rounded-lg flex items-center justify-center text-sm sm:text-base text-primary-foreground">
                 Ps.
               </div>
               <span className="text-lg sm:text-xl font-bold">pinstack</span>
@@ -71,7 +71,7 @@ export function Navbar({ currentPage }: NavbarProps) {
               </div>
 
               {/* CTA Button - Both mobile and desktop */}
-              <Button asChild size="sm" className="text-sm sm:text-base px-3 sm:px-4 md:px-6 py-2 sm:py-3 rounded-xl">
+              <Button asChild className="text-sm sm:text-base px-3 py-4 md:pl-4 md:pr-2 md:py-4 rounded-xl">
                 <Link href="/sign-in">
                   Login
                   <div className="ml-2 w-4 h-4 sm:w-6 sm:h-6 bg-foreground/10 rounded-md flex items-center justify-center">

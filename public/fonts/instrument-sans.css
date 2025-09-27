@@ -1,0 +1,79 @@
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-Regular.woff2') format('woff2'),
+       url('./InstrumentSans-Regular.woff') format('woff'),
+       url('./InstrumentSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-Medium.woff2') format('woff2'),
+       url('./InstrumentSans-Medium.woff') format('woff'),
+       url('./InstrumentSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-SemiBold.woff2') format('woff2'),
+       url('./InstrumentSans-SemiBold.woff') format('woff'),
+       url('./InstrumentSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-Bold.woff2') format('woff2'),
+       url('./InstrumentSans-Bold.woff') format('woff'),
+       url('./InstrumentSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-Italic.woff2') format('woff2'),
+       url('./InstrumentSans-Italic.woff') format('woff'),
+       url('./InstrumentSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-MediumItalic.woff2') format('woff2'),
+       url('./InstrumentSans-MediumItalic.woff') format('woff'),
+       url('./InstrumentSans-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-SemiBoldItalic.woff2') format('woff2'),
+       url('./InstrumentSans-SemiBoldItalic.woff') format('woff'),
+       url('./InstrumentSans-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('./InstrumentSans-BoldItalic.woff2') format('woff2'),
+       url('./InstrumentSans-BoldItalic.woff') format('woff'),
+       url('./InstrumentSans-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}

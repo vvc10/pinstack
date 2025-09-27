@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ImageUpload } from "@/components/ui/image-upload"
 import { X, Upload, ChevronDown, Plus } from "lucide-react"
 import { usePinOperations } from "@/hooks/use-database"
+import { useLoadingState } from "@/hooks/use-loading"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -45,6 +46,7 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
     credits: ""
   })
   const { createPin, loading, error } = usePinOperations()
+  const { withLoading } = useLoadingState()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,46 +75,50 @@ export function CreatePinModal({ open, onOpenChange }: CreatePinModalProps) {
     }
     
     try {
-      // Parse tags from comma-separated string (user tags only)
-      const tags = formData.tags
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0)
+      const newPin = await withLoading(async () => {
+        // Parse tags from comma-separated string (user tags only)
+        const tags = formData.tags
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(tag => tag.length > 0)
 
-      const pinData = {
-        title: formData.title,
-        description: formData.description || undefined,
-        code: formData.code,
-        language: formData.languages.join(", "),
-        component_type: formData.componentType !== "all" ? formData.componentType : undefined,
-        tags: tags,
-        image_url: formData.image || formData.url || undefined,
-        url: formData.url || undefined,
-        figma_code: formData.figma_code || undefined,
-        credits: formData.credits || undefined
-      }
+        const pinData = {
+          title: formData.title,
+          description: formData.description || undefined,
+          code: formData.code,
+          language: formData.languages.join(", "),
+          component_type: formData.componentType !== "all" ? formData.componentType : undefined,
+          tags: tags,
+          image_url: formData.image || formData.url || undefined,
+          url: formData.url || undefined,
+          figma_code: formData.figma_code || undefined,
+          credits: formData.credits || undefined
+        }
 
-      const newPin = await createPin(pinData)
+        const newPin = await createPin(pinData)
       
-             toast.success("🎉 Pin Created!", {
-               description: `"${formData.title}" has been successfully created and published!`,
-               duration: 4000,
-             })
-      onOpenChange(false)
-      
-      // Reset form
-      setFormData({
-        title: "",
-        image: "",
-        url: "",
-        figma_code: "",
-        code: "",
-        languages: [],
-        componentType: "",
-        tags: "",
-        description: "",
-        credits: ""
-      })
+        toast.success("🎉 Pin Created!", {
+          description: `"${formData.title}" has been successfully created and published!`,
+          duration: 4000,
+        })
+        onOpenChange(false)
+        
+        // Reset form
+        setFormData({
+          title: "",
+          image: "",
+          url: "",
+          figma_code: "",
+          code: "",
+          languages: [],
+          componentType: "",
+          tags: "",
+          description: "",
+          credits: ""
+        })
+
+        return newPin
+      }, "Creating pin...")
 
       // Redirect to the new pin
       router.push(`/pin/${newPin.id}`)

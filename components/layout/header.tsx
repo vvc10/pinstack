@@ -14,6 +14,7 @@ import { NoticeBanner } from "@/components/ui/notice-banner"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { useAuth } from "@/contexts/auth-context"
+import { useLoadingState } from "@/hooks/use-loading"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface HeaderProps {
@@ -34,6 +35,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
   const [sortOpen, setSortOpen] = useState(false)
   const { isCollapsed } = useSidebar()
   const { user, signOut } = useAuth()
+  const { startLoading, stopLoading } = useLoadingState()
 
 
   useEffect(() => {
@@ -59,13 +61,14 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
         const newUrl = `/home?${params.toString()}`
         
         if (searchParams.toString() !== params.toString()) {
+          startLoading("Searching...")
           router.push(newUrl)
         }
       }
     }, 500) // 500ms debounce
 
     return () => clearTimeout(timeoutId)
-  }, [q, mounted, router, pathname, searchParams])
+  }, [q, mounted, router, pathname, searchParams, startLoading])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -130,6 +133,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                       params.delete("q")
                     }
                     const newUrl = `/home?${params.toString()}`
+                    startLoading("Searching...")
                     router.push(newUrl)
                   }
                 }}

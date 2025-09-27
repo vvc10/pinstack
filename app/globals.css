@@ -99,6 +99,8 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-garamond: 'Garamond BE Condensed', 'Times New Roman', serif;
+  --font-instrument: 'Instrument Serif', 'Times New Roman', serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -143,6 +145,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  .font-garamond {
+    font-family: 'Garamond BE Condensed', 'Times New Roman', serif;
+  }
+  
+  .font-garamond.italic {
+    font-style: italic;
+  }
+  
+  .font-instrument {
+    font-family: 'Instrument Serif', 'Times New Roman', serif;
   }
 }
 

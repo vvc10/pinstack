@@ -4,10 +4,14 @@ import { DM_Sans, DM_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+import "/public/fonts/garamond-be-condensed.css"
+import "/public/fonts/instrument-serif.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/contexts/auth-context"
 import { NoticeBannerProvider } from "@/contexts/notice-banner-context"
+import { LoadingProvider } from "@/contexts/loading-context"
 import { AuthRedirect } from "@/components/auth/auth-redirect"
+import { UniversalLoader } from "@/components/ui/universal-loader"
 import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
@@ -41,19 +45,22 @@ export default function RootLayout({
           Skip to content
         </a>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <AuthProvider>
-            <NoticeBannerProvider>
-              <AuthRedirect>
-                <Suspense fallback={null}>
-                  <main id="content" role="main" className="min-h-screen">
-                    {children}
-                  </main>
-                </Suspense>
-              </AuthRedirect>
-              <Analytics />
-              <Toaster />
-            </NoticeBannerProvider>
-          </AuthProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <NoticeBannerProvider>
+                <AuthRedirect>
+                  <Suspense fallback={null}>
+                    <main id="content" role="main" className="min-h-screen">
+                      {children}
+                    </main>
+                  </Suspense>
+                </AuthRedirect>
+                <UniversalLoader />
+                <Analytics />
+                <Toaster />
+              </NoticeBannerProvider>
+            </AuthProvider>
+          </LoadingProvider>
         </ThemeProvider>
       </body>
     </html>

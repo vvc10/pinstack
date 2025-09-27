@@ -13,7 +13,7 @@ interface CTACardProps {
   showImages?: boolean
 }
 
-export function CTACard({ 
+export function CTACard({
   title = "Get your perfect UI components today",
   description = "Copy, paste, tweak, and ship. Beautiful UI components ready to use in your projects.",
   buttonText = "Start Creating",
@@ -25,28 +25,30 @@ export function CTACard({
       {/* Subtle background pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(120,119,198,0.1),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(168,85,247,0.1),transparent_50%)]"></div>
-      
+
       <CardContent className="p-0 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
           {/* Left Side - CTA Content */}
           <div className="p-6 sm:p-8 lg:p-12">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 text-foreground dark:text-white">
-              {title}
-            </h2>
-            <p className="text-base sm:text-lg text-muted-foreground dark:text-zinc-300 mb-6 sm:mb-8 leading-relaxed">
-              {description}
-            </p>
-            <Button 
-              size="lg" 
-              asChild 
+            <h2 className="font-garamond flex flex-wrap text-left gap-2 items-start justify-start text-3xl sm:text-4xl lg:text-5xl font-normal mb-4 text-foreground dark:text-white">
+              Get your
+              <p className="font-instrument font-normal text-3xl sm:text-4xl lg:text-5xl text-primary italic">Perfect UI</p>
+              components today
+
+            </h2>   
+            <p className="text-md sm:text-lg lg:text-xl text-muted-foreground dark:text-zinc-300 mb-6 sm:mb-8 leading-relaxed text-left">
+              Copy, paste, tweak, and ship. Beautiful UI components ready to use in your projects.            </p>
+            <Button
+              size="lg"
+              asChild
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg font-medium transition-all duration-300 hover:scale-105 w-full sm:w-auto"
             >
               <Link href={buttonHref}>
-                {buttonText}
+                Start Creating
               </Link>
             </Button>
           </div>
-          
+
           {/* Right Side - Component Showcase Grid */}
           {showImages && (
             <div className="p-3 sm:p-4 lg:p-6">
