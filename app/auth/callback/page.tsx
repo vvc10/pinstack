@@ -27,7 +27,26 @@ export default function AuthCallback() {
           return
         }
 
-        if (data.session) {
+        if (data.session && data.session.user) {
+          // Ensure user exists in database
+          try {
+            const response = await fetch('/api/users/ensure', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                user: data.session.user
+              })
+            })
+
+            if (!response.ok) {
+              console.error('Failed to ensure user exists')
+            }
+          } catch (userError) {
+            console.error('Error ensuring user exists:', userError)
+          }
+
           // Successfully authenticated, redirect to home
           router.push('/home')
         } else {

@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
       metadata: user.user_metadata 
     })
 
-    // Ensure user exists in users table (upsert)
+    // User should already exist due to auth trigger, but let's ensure it exists
     const { error: userError } = await supabase
       .from('users')
       .upsert([{
@@ -193,7 +193,8 @@ export async function POST(req: NextRequest) {
 
     if (userError) {
       console.error('Error upserting user:', userError)
-      return Response.json({ error: "Failed to create user profile" }, { status: 500 })
+      // Don't fail the pin creation if user upsert fails, just log it
+      console.warn('Continuing with pin creation despite user upsert error')
     }
 
     // Create the pin with pending status for admin approval

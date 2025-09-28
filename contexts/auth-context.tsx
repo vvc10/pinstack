@@ -24,6 +24,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession()
       setUser(session?.user ?? null)
       setLoading(false)
+
+      // Ensure user exists in database if they have a session
+      if (session?.user) {
+        try {
+          const response = await fetch('/api/users/ensure', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              user: session.user
+            })
+          })
+
+          if (!response.ok) {
+            console.error('Failed to ensure user exists during initial session check')
+          }
+        } catch (error) {
+          console.error('Error ensuring user exists during initial session check:', error)
+        }
+      }
     }
 
     getInitialSession()
@@ -33,6 +54,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         setUser(session?.user ?? null)
         setLoading(false)
+
+        // Ensure user exists in database when they sign in
+        if (event === 'SIGNED_IN' && session?.user) {
+          try {
+            const response = await fetch('/api/users/ensure', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                user: session.user
+              })
+            })
+
+            if (!response.ok) {
+              console.error('Failed to ensure user exists during auth state change')
+            }
+          } catch (error) {
+            console.error('Error ensuring user exists during auth state change:', error)
+          }
+        }
       }
     )
 
