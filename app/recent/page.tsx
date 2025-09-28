@@ -1,5 +1,8 @@
 "use client"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { AppLayout } from "@/components/layout/app-layout"
 import { MasonryPinterest } from "@/components/masonry-pinterest"
 import { PinCard } from "@/components/pin/pin-card"

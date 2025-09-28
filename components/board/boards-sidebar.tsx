@@ -184,8 +184,8 @@ export function BoardsSidebar({
           <div className={`flex items-center gap-3 py-4 ${
             isCollapsed ? 'justify-center' : ''
           }`}>
-            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
-              <span className="text-primary-foreground font-bold text-sm">Ps.</span>
+            <div className="h-10 w-10 font-garamond rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+              <span className="text-primary-foreground font-bold text-xl">Ps.</span>
             </div>
             {!isCollapsed && (
               <span className="font-bold text-xl truncate">Pinstack</span>
@@ -426,7 +426,7 @@ export function BoardsSidebar({
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-lg">Ps.</span>
+                  <span className="font-garamond text-primary-foreground font-bold text-xl">Ps.</span>
                 </div>
                 <span className="font-bold text-xl">Pinstack</span>
               </div>

@@ -1,5 +1,8 @@
 "use client"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { AppLayout } from "@/components/layout/app-layout"
 import { LearningPathsSection } from "@/components/paths/learning-paths"
 

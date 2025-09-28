@@ -37,18 +37,21 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
   const { user, signOut } = useAuth()
   const { startLoading, stopLoading } = useLoadingState()
 
+  // Handle case where searchParams might not be available during SSR
+  const safeSearchParams = searchParams || new URLSearchParams()
+
 
   useEffect(() => {
     setMounted(true)
     // Initialize search query from URL parameters
-    setQ(searchParams.get("q") ?? "")
-  }, [searchParams])
+    setQ(safeSearchParams.get("q") ?? "")
+  }, [safeSearchParams])
 
   // Handle search changes with debouncing
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (mounted) {
-        const params = new URLSearchParams(searchParams.toString())
+        const params = new URLSearchParams(safeSearchParams.toString())
 
         // Update search query
         if (q.trim()) {
@@ -60,7 +63,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
         // Navigate to home page with search params
         const newUrl = `/home?${params.toString()}`
         
-        if (searchParams.toString() !== params.toString()) {
+        if (safeSearchParams.toString() !== params.toString()) {
           startLoading("Searching...")
           router.push(newUrl)
         }
@@ -68,7 +71,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
     }, 500) // 500ms debounce
 
     return () => clearTimeout(timeoutId)
-  }, [q, mounted, router, pathname, searchParams, startLoading])
+  }, [q, mounted, router, pathname, safeSearchParams, startLoading])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -126,7 +129,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault()
-                    const params = new URLSearchParams(searchParams.toString())
+                    const params = new URLSearchParams(safeSearchParams.toString())
                     if (q.trim()) {
                       params.set("q", q.trim())
                     } else {

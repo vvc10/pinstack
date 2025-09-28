@@ -1,5 +1,8 @@
 "use client"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useMemo, useState, use } from "react"
 import Link from "next/link"
 import useSWR from "swr"

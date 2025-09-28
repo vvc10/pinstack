@@ -1,5 +1,8 @@
 "use client"
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+
 import { useEffect, useMemo, useRef, useState } from "react"
 import useSWRInfinite from "swr/infinite"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"

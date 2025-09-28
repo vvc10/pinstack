@@ -1,8 +1,8 @@
-import { AppLayout } from "@/components/layout/app-layout"
+import { ServerAppLayout } from "@/components/layout/server-app-layout"
 
 export default function NotificationsPage() {
   return (
-    <AppLayout currentTab="notifications">
+    <ServerAppLayout currentTab="notifications">
       <div>
         <div className="text-center py-20">
           <div className="max-w-md mx-auto">
@@ -17,6 +17,6 @@ export default function NotificationsPage() {
           </div>
         </div>
       </div>
-    </AppLayout>
+    </ServerAppLayout>
   )
 }

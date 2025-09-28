@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, Suspense } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 interface LoadingContextType {
@@ -12,7 +12,7 @@ interface LoadingContextType {
 
 const LoadingContext = createContext<LoadingContextType | undefined>(undefined)
 
-export function LoadingProvider({ children }: { children: React.ReactNode }) {
+function LoadingProviderContent({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(false)
   const [loadingMessage, setLoadingMessage] = useState<string | undefined>(undefined)
   const pathname = usePathname()
@@ -43,6 +43,14 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
     <LoadingContext.Provider value={{ isLoading, setLoading, loadingMessage, setLoadingMessage }}>
       {children}
     </LoadingContext.Provider>
+  )
+}
+
+export function LoadingProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background">{children}</div>}>
+      <LoadingProviderContent>{children}</LoadingProviderContent>
+    </Suspense>
   )
 }
 

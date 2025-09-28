@@ -45,22 +45,19 @@ export default function RootLayout({
           Skip to content
         </a>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <LoadingProvider>
-            <AuthProvider>
-              <NoticeBannerProvider>
-                <AuthRedirect>
-                  <Suspense fallback={null}>
-                    <main id="content" role="main" className="min-h-screen">
-                      {children}
-                    </main>
-                  </Suspense>
-                </AuthRedirect>
-                <UniversalLoader />
-                <Analytics />
-                <Toaster />
-              </NoticeBannerProvider>
-            </AuthProvider>
-          </LoadingProvider>
+          <AuthProvider>
+            <NoticeBannerProvider>
+              <AuthRedirect>
+                <Suspense fallback={null}>
+                  <main id="content" role="main" className="min-h-screen">
+                    {children}
+                  </main>
+                </Suspense>
+              </AuthRedirect>
+              <Analytics />
+              <Toaster />
+            </NoticeBannerProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -5,6 +5,8 @@ import { BoardsSidebar, SidebarProvider, useSidebar } from "@/components/board/b
 import { Header } from "./header"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { useNoticeBanner } from "@/contexts/notice-banner-context"
+import { LoadingProvider } from "@/contexts/loading-context"
+import { UniversalLoader } from "@/components/ui/universal-loader"
 
 interface AppLayoutProps {
   children: ReactNode
@@ -66,10 +68,13 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
 
 export function AppLayout({ children, currentTab, sort, onSortChange }: AppLayoutProps) {
   return (
-    <SidebarProvider>
-      <AppLayoutContent currentTab={currentTab} sort={sort} onSortChange={onSortChange}>
-        {children}
-      </AppLayoutContent>
-    </SidebarProvider>
+    <LoadingProvider>
+      <SidebarProvider>
+        <AppLayoutContent currentTab={currentTab} sort={sort} onSortChange={onSortChange}>
+          {children}
+        </AppLayoutContent>
+        <UniversalLoader />
+      </SidebarProvider>
+    </LoadingProvider>
   )
 }
