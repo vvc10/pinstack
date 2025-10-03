@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft, ExternalLink, Copy, Check } from 'lucide-react'
-import Link from 'next/link'
-import { toast } from 'sonner'
-import { Sandpack } from '@codesandbox/sandpack-react'
+import { useEffect, useState } from "react"
+import { useParams } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft, ExternalLink, Copy, Check } from "lucide-react"
+import Link from "next/link"
+import { toast } from "sonner"
+import { Sandpack } from "@codesandbox/sandpack-react"
 
 interface Pin {
   id: string
@@ -41,10 +41,10 @@ export default function PreviewPage() {
   // Set dark mode as default if no theme is set
   useEffect(() => {
     // Only add dark mode if no theme is already set
-    if (!document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light')) {
-      document.documentElement.classList.add('dark');
+    if (!document.documentElement.classList.contains("dark") && !document.documentElement.classList.contains("light")) {
+      document.documentElement.classList.add("dark")
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     const fetchPin = async () => {
@@ -52,7 +52,7 @@ export default function PreviewPage() {
         setLoading(true)
         const response = await fetch(`/api/pins/${pinId}`)
         if (!response.ok) {
-          throw new Error('Pin not found')
+          throw new Error("Pin not found")
         }
         const data = await response.json()
         // Transform the API response to match our Pin interface
@@ -70,14 +70,14 @@ export default function PreviewPage() {
           votes: data.pin.votes || 0,
           is_liked: false,
           is_saved: false,
-          author: data.author
+          author: data.author,
         }
-        console.log('Pin loaded:', transformedPin)
-        console.log('Code:', transformedPin.code)
-        console.log('Language:', transformedPin.lang)
+        console.log("Pin loaded:", transformedPin)
+        console.log("Code:", transformedPin.code)
+        console.log("Language:", transformedPin.lang)
         setPin(transformedPin)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load pin')
+        setError(err instanceof Error ? err.message : "Failed to load pin")
       } finally {
         setLoading(false)
       }
@@ -99,333 +99,183 @@ export default function PreviewPage() {
 
   const getSandpackFiles = () => {
     if (!pin) return {}
-    
-    const { code, lang } = pin
-    console.log('Getting Sandpack files for:', { code: code?.substring(0, 100) + '...', lang })
-    
-    // Auto-detect React components even if language is not set correctly
-    const isReactComponent = code.includes('export default function') || 
-                            code.includes('export default') || 
-                            code.includes('function ') && code.includes('return (') ||
-                            code.includes('const ') && code.includes('= () =>') ||
-                            code.includes('jsx') || code.includes('JSX')
-    
-    // Use React template if it's a React component
-    if (isReactComponent && lang.toLowerCase() !== 'react') {
-      console.log('Auto-detected React component, switching to React template')
-      
-      // Process the code to handle imports properly
-      let processedCode = code;
-      
-      // Handle Lucide React imports - keep them as they are since we added the dependency
-      if (code.includes('lucide-react')) {
-        console.log('Detected Lucide React imports, keeping them as-is')
-        // Keep the import statements as they are since we added lucide-react as a dependency
-      }
-      
-      return {
-        '/App.js': {
-          code: processedCode,
-          active: true,
-        },
-        '/styles.css': {
-          code: `/* Custom styles for the component */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
 
-* {
-  box-sizing: border-box;
-}`,
-          active: false,
+    const { code } = pin
+    const lang = (pin.lang || "").toLowerCase().replace(/^\./, "")
+
+    const explicitlyReactLang = ["jsx", "tsx", "react", "typescriptreact", "react-ts"].includes(lang)
+
+    // Strong HTML doc markers
+    const strongHtmlDoc = /<!DOCTYPE/i.test(code) || /<(html|head|body)\b/i.test(code)
+    // Generic HTML tags commonly seen in pasted snippets
+    const hasHtmlTags = /<(div|span|button|a|p|ul|ol|li|section|article|main|header|footer|style|script)\b/i.test(code)
+
+    const looksReactish =
+      explicitlyReactLang ||
+      /from\s+['"]react['"]/.test(code) ||
+      /React\./.test(code) ||
+      /export\s+default/.test(code) ||
+      (/\breturn\s*\(/.test(code) && /\b(function|const|let|var)\b/.test(code))
+
+    // Prefer static for any strong HTML document
+    if (strongHtmlDoc) {
+      return {
+        "/index.html": { code, active: true },
+      }
+    }
+
+    // If it looks like HTML and not clearly React, render as static HTML
+    if (hasHtmlTags && !looksReactish) {
+      return {
+        "/index.html": {
+          code: `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preview</title>
+</head>
+<body>
+${code}
+</body>
+</html>`,
+          active: true,
         },
       }
     }
-    
-    switch (lang.toLowerCase()) {
-      case 'html':
+
+    // Language-specific handling
+    switch (lang) {
+      case "html":
+      case "htm":
+        return { "/index.html": { code, active: true } }
+      case "css":
         return {
-          '/index.html': {
-            code: code,
-            active: true,
-          },
-        }
-      case 'css':
-        return {
-          '/styles.css': {
-            code: code,
-            active: true,
-          },
-          '/index.html': {
+          "/styles.css": { code, active: true },
+          "/index.html": {
             code: '<!DOCTYPE html>\n<html>\n<head>\n  <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n  <div>Your CSS styles will be applied here</div>\n</body>\n</html>',
           },
         }
-      case 'javascript':
-      case 'js':
-        // Check if code has imports and handle them properly
-        let processedCode = code;
-        
-        // If code has imports, we need to handle them differently
-        if (code.includes('import ') || code.includes('require(')) {
-          // For code with imports, create a proper module structure
-          processedCode = `
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    // Create a mock styles.css if imported
-    if (typeof document !== 'undefined') {
-      const style = document.createElement('style');
-      style.textContent = \`
-        /* Add some basic styles */
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
-      \`;
-      document.head.appendChild(style);
-    }
-    
-    ${code.replace(/import\s+["'].*["']\s*;?/g, '// Import statement removed for preview')}
-  } catch (error) {
-    console.error('Error executing code:', error);
-    const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = '<div style="color: red; padding: 20px; border: 1px solid red; border-radius: 8px; margin: 20px;">Error: ' + error.message + '</div>';
-    }
-  }
-});
-          `.trim();
-        } else {
-          // For regular code without imports
-          processedCode = `
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
+      case "javascript":
+      case "js": {
+        const processedCode = `document.addEventListener('DOMContentLoaded', function() {
   try {
     ${code}
   } catch (error) {
     console.error('Error executing code:', error);
     const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = '<div style="color: red; padding: 20px; border: 1px solid red; border-radius: 8px; margin: 20px;">Error: ' + error.message + '</div>';
-    }
+    if (app) app.innerHTML = '<div style="color:red;padding:20px;border:1px solid red;border-radius:8px;margin:20px;">Error: ' + error.message + '</div>';
   }
-});
-          `.trim();
-        }
-        
-        const wrappedJsCode = processedCode
-        
+});`
         return {
-          '/index.js': {
-            code: wrappedJsCode,
-            active: true,
-          },
-          '/index.html': {
+          "/index.js": { code: processedCode, active: true },
+          "/index.html": {
             code: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Preview</title>\n  <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n  <div id="app"></div>\n  <script src="index.js"></script>\n</body>\n</html>',
           },
-          '/styles.css': {
-            code: '/* Basic styles for preview */\nbody { font-family: Arial, sans-serif; margin: 20px; }\nh1 { color: #333; }\n',
+          "/styles.css": {
+            code: "body{font-family:Arial,sans-serif;margin:20px}h1{color:#333}",
             active: false,
           },
         }
-      case 'typescript':
-      case 'ts':
-        // Check if code has imports and handle them properly
-        let processedTsCode = code;
-        
-        // If code has imports, we need to handle them differently
-        if (code.includes('import ') || code.includes('require(')) {
-          // For code with imports, create a proper module structure
-          processedTsCode = `
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    // Create a mock styles.css if imported
-    if (typeof document !== 'undefined') {
-      const style = document.createElement('style');
-      style.textContent = \`
-        /* Add some basic styles */
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { color: #333; }
-      \`;
-      document.head.appendChild(style);
-    }
-    
-    ${code.replace(/import\s+["'].*["']\s*;?/g, '// Import statement removed for preview')}
-  } catch (error) {
-    console.error('Error executing code:', error);
-    const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = '<div style="color: red; padding: 20px; border: 1px solid red; border-radius: 8px; margin: 20px;">Error: ' + error.message + '</div>';
-    }
-  }
-});
-          `.trim();
-        } else {
-          // For regular code without imports
-          processedTsCode = `
-// Wait for DOM to be ready
-document.addEventListener('DOMContentLoaded', function() {
+      }
+      case "typescript":
+      case "ts": {
+        const processedTsCode = `document.addEventListener('DOMContentLoaded', function() {
   try {
     ${code}
   } catch (error) {
     console.error('Error executing code:', error);
     const app = document.getElementById('app');
-    if (app) {
-      app.innerHTML = '<div style="color: red; padding: 20px; border: 1px solid red; border-radius: 8px; margin: 20px;">Error: ' + error.message + '</div>';
-    }
+    if (app) app.innerHTML = '<div style="color:red;padding:20px;border:1px solid red;border-radius:8px;margin:20px;">Error: ' + error.message + '</div>';
   }
-});
-          `.trim();
-        }
-        
-        const wrappedTsCode = processedTsCode
-        
+});`
         return {
-          '/index.ts': {
-            code: wrappedTsCode,
-            active: true,
-          },
-          '/index.html': {
+          "/index.ts": { code: processedTsCode, active: true },
+          "/index.html": {
             code: '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>Preview</title>\n  <link rel="stylesheet" href="styles.css">\n</head>\n<body>\n  <div id="app"></div>\n  <script type="module" src="index.ts"></script>\n</body>\n</html>',
           },
-          '/styles.css': {
-            code: '/* Basic styles for preview */\nbody { font-family: Arial, sans-serif; margin: 20px; }\nh1 { color: #333; }\n',
+          "/styles.css": {
+            code: "body{font-family:Arial,sans-serif;margin:20px}h1{color:#333}",
             active: false,
           },
         }
-      case 'react':
-        // Process the code to handle imports properly
-        let processedReactCode = code;
-        
-        // Replace shadcn UI imports with standard HTML elements
-        // First, split into lines and process each line
-        const lines = processedReactCode.split('\n');
-        const processedLines = lines.map(line => {
-          // Remove shadcn UI imports
-          if (line.includes('@/components/ui/')) {
-            return ''; // Remove the entire line
-          }
-          return line;
-        });
-        processedReactCode = processedLines.join('\n');
-        
-        // Additional cleanup for any remaining imports
-        processedReactCode = processedReactCode
-          // Remove any remaining @/components imports
-          .replace(/import\s*[^;]*@\/components[^;]*;?\s*/g, '')
-          // Replace Button components
-          .replace(/<Button\s+([^>]*)>/g, '<button $1>')
-          .replace(/<\/Button>/g, '</button>')
-          // Replace Input components
-          .replace(/<Input\s+([^>]*)>/g, '<input $1>')
-          .replace(/<\/Input>/g, '')
-          // Replace Card components
-          .replace(/<Card\s+([^>]*)>/g, '<div $1>')
-          .replace(/<\/Card>/g, '</div>')
-          // Replace Dialog components
-          .replace(/<Dialog\s+([^>]*)>/g, '<div $1>')
-          .replace(/<\/Dialog>/g, '</div>')
-          // Replace other common shadcn components
-          .replace(/<Badge\s+([^>]*)>/g, '<span $1>')
-          .replace(/<\/Badge>/g, '</span>')
-          .replace(/<Label\s+([^>]*)>/g, '<label $1>')
-          .replace(/<\/Label>/g, '</label>')
-          .replace(/<Textarea\s+([^>]*)>/g, '<textarea $1>')
-          .replace(/<\/Textarea>/g, '</textarea>')
-          .replace(/<Select\s+([^>]*)>/g, '<select $1>')
-          .replace(/<\/Select>/g, '</select>')
-          .replace(/<Checkbox\s+([^>]*)>/g, '<input type="checkbox" $1>')
-          .replace(/<\/Checkbox>/g, '')
-          .replace(/<RadioGroup\s+([^>]*)>/g, '<div $1>')
-          .replace(/<\/RadioGroup>/g, '</div>')
-          .replace(/<RadioGroupItem\s+([^>]*)>/g, '<input type="radio" $1>')
-          .replace(/<\/RadioGroupItem>/g, '');
-        
-        // Handle Lucide React imports - keep them as they are since we added the dependency
-        if (code.includes('lucide-react')) {
-          console.log('Detected Lucide React imports in React case, keeping them as-is')
-          // Keep the import statements as they are since we added lucide-react as a dependency
-        }
-        
-        // Debug: Log the processed code to see what's happening
-        console.log('Original code:', code.substring(0, 200));
-        console.log('Processed code:', processedReactCode.substring(0, 200));
-        
+      }
+      case "react":
+      case "jsx": {
+        const processedReactCode = code
+          .split("\n")
+          .map((l) => (l.includes("@/components/ui/") ? "" : l))
+          .join("\n")
+          .replace(/import\s*[^;]*@\/components[^;]*;?\s*/g, "")
         return {
-          '/App.js': {
-            code: processedReactCode,
-            active: true,
-          },
-          '/styles.css': {
-            code: `/* Custom styles for the component */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-}`,
-            active: false,
-          },
+          "/App.js": { code: processedReactCode, active: true },
         }
-      case 'vue':
+      }
+      case "tsx":
+      case "typescriptreact":
+      case "react-ts": {
+        const processedReactCode = code
+          .split("\n")
+          .map((l) => (l.includes("@/components/ui/") ? "" : l))
+          .join("\n")
+          .replace(/import\s*[^;]*@\/components[^;]*;?\s*/g, "")
         return {
-          '/App.vue': {
-            code: code,
+          "/App.tsx": { code: processedReactCode, active: true },
+        }
+      }
+      case "vue":
+        return { "/App.vue": { code, active: true } }
+      case "svelte":
+        return { "/App.svelte": { code, active: true } }
+      default: {
+        if (looksReactish) {
+          return { "/App.js": { code, active: true } }
+        }
+        return {
+          "/index.html": {
+            code: `<!DOCTYPE html>
+<html><head><meta charset="UTF-8" /></head><body>
+<pre style="padding:16px;white-space:pre-wrap;word-break:break-word;background:#0b0b0b;color:#eaeaea;border-radius:8px"><code>${code
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")}</code></pre>
+</body></html>`,
             active: true,
           },
         }
-      case 'svelte':
-        return {
-          '/App.svelte': {
-            code: code,
-            active: true,
-          },
-        }
-      default:
-        return {
-          '/index.html': {
-            code: `<pre><code>${code}</code></pre>`,
-            active: true,
-          },
-        }
+      }
     }
   }
 
   const getTemplate = () => {
-    if (!pin) return 'vanilla'
-    
-    // Auto-detect React components
-    const isReactComponent = pin.code.includes('export default function') || 
-                            pin.code.includes('export default') || 
-                            pin.code.includes('function ') && pin.code.includes('return (') ||
-                            pin.code.includes('const ') && pin.code.includes('= () =>') ||
-                            pin.code.includes('jsx') || pin.code.includes('JSX')
-    
-    if (isReactComponent) {
-      return 'react'
-    }
-    
-    switch (pin.lang.toLowerCase()) {
-      case 'react':
-        return 'react'
-      case 'vue':
-        return 'vue'
-      case 'svelte':
-        return 'svelte'
+    if (!pin) return "static"
+    const lang = (pin.lang || "").toLowerCase().replace(/^\./, "")
+
+    const explicitlyReactLang = ["jsx", "tsx", "react", "typescriptreact", "react-ts"].includes(lang)
+    const strongHtmlDoc = /<!DOCTYPE/i.test(pin.code) || /<(html|head|body)\b/i.test(pin.code)
+    const hasHtmlTags = /<(div|span|button|a|p|ul|ol|li|section|article|main|header|footer|style|script)\b/i.test(
+      pin.code,
+    )
+    const looksReactish =
+      explicitlyReactLang ||
+      /from\s+['"]react['"]/.test(pin.code) ||
+      /React\./.test(pin.code) ||
+      /export\s+default/.test(pin.code) ||
+      (/\breturn\s*\(/.test(pin.code) && /\b(function|const|let|var)\b/.test(pin.code))
+
+    if (strongHtmlDoc) return "static"
+    if (hasHtmlTags && !looksReactish) return "static"
+    if (lang === "tsx" || lang === "typescriptreact" || lang === "react-ts") return "react-ts"
+    if (lang === "jsx" || lang === "react" || looksReactish) return "react"
+    if (lang === "ts" || lang === "typescript") return "vanilla-ts"
+    if (lang === "html" || lang === "htm" || lang === "css") return "static"
+    switch (lang) {
+      case "vue":
+        return "vue"
+      case "svelte":
+        return "svelte"
       default:
-        return 'vanilla'
+        return looksReactish ? "react" : "static"
     }
   }
 
@@ -448,9 +298,7 @@ body {
             <CardTitle className="text-xl">Preview Not Available</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <p className="text-muted-foreground">
-              {error || 'This pin could not be found or loaded.'}
-            </p>
+            <p className="text-sm text-muted-foreground">{error || "This pin could not be found or loaded."}</p>
             <Button asChild>
               <Link href="/">
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -505,7 +353,7 @@ body {
           overflow-wrap: break-word !important;
         }
       `}</style>
-      
+
       {/* Header */}
       <div className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
@@ -527,14 +375,10 @@ body {
                 variant="outline"
                 size="sm"
                 onClick={handleCopyCode}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-transparent"
               >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-                {copied ? 'Copied!' : 'Copy Code'}
+                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied ? "Copied!" : "Copy Code"}
               </Button>
               <Button variant="outline" size="sm" asChild>
                 <Link href={`/pin/${pin.id}`} target="_blank">
@@ -549,31 +393,35 @@ body {
 
       {/* Live Preview */}
       <div className="h-[calc(100vh-80px)] w-full">
-        <Sandpack
-          template={getTemplate()}
-          files={getSandpackFiles()}
-          options={{
-            showNavigator: false,
-            showTabs: true,
-            showLineNumbers: true,
-            showInlineErrors: true,
-            wrapContent: true,
-            editorHeight: '100%',
-            editorWidthPercentage: 40,
-            externalResources: [
-              'https://cdn.tailwindcss.com'
-            ],
-            initMode: 'lazy'
-          }}
-          customSetup={{
-            dependencies: {
-              'lucide-react': 'latest',
-              'react': '^18.0.0',
-              'react-dom': '^18.0.0'
-            }
-          }}
-          theme="dark"
-        />
+        {!pin.code || pin.code.trim() === "" ? (
+          <div className="h-full w-full flex items-center justify-center">
+            <p className="text-muted-foreground text-sm">code is not available will be updated soon</p>
+          </div>
+        ) : (
+          <Sandpack
+            template={getTemplate()}
+            files={getSandpackFiles()}
+            options={{
+              showNavigator: false,
+              showTabs: true,
+              showLineNumbers: true,
+              showInlineErrors: true,
+              wrapContent: true,
+              editorHeight: "100%",
+              editorWidthPercentage: 40,
+              externalResources: ["https://cdn.tailwindcss.com"],
+              initMode: "lazy",
+            }}
+            customSetup={{
+              dependencies: {
+                "lucide-react": "latest",
+                react: "^18.0.0",
+                "react-dom": "^18.0.0",
+              },
+            }}
+            theme="dark"
+          />
+        )}
       </div>
     </div>
   )

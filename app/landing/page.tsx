@@ -112,16 +112,25 @@ export default function LandingPage() {
                   Get instant code, use it, ship it. Browse our curated collection of stunning components and ship your next project in record time.
                 </p>
                
-                {/* CTA Button */}
-                <Button size="lg" asChild className="text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 rounded-xl w-full sm:w-auto mx-auto">
-                  <Link href="/sign-in">
-                    <Chrome className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
-                    Get Started 
-                    <div className="ml-2 sm:ml-3 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-foreground/10 rounded-md flex items-center justify-center">
-                      <ArrowRight className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3" />
-                    </div>
-                  </Link>
-                </Button>
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto mx-auto justify-center">
+                  <Button size="lg" asChild className="text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 rounded-xl w-full sm:w-auto">
+                    <Link href="/sign-in">
+                      <Chrome className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
+                      Get Started 
+                      <div className="ml-2 sm:ml-3 w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 bg-foreground/10 rounded-md flex items-center justify-center">
+                        <ArrowRight className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3" />
+                      </div>
+                    </Link>
+                  </Button>
+                  
+                  <Button size="lg" variant="outline" asChild className="text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 rounded-xl w-full sm:w-auto">
+                    <Link href="/components">
+                      <Code className="mr-2 sm:mr-3 h-4 w-4 sm:h-5 sm:w-5" />
+                      Explore
+                    </Link>
+                  </Button>
+                </div>
                 <p className="font-[400] dark:text-zinc-400 text-xs sm:text-sm mx-auto">
                   Skip the design phase. Get production-ready code in seconds.
                 </p>

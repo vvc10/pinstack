@@ -68,10 +68,17 @@ export function Navbar({ currentPage }: NavbarProps) {
                 >
                   Components
                 </Link>
+                <a
+                  href="/blogs"
+                  className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
+                >
+                  Blogs
+                </a>
+          
               </div>
 
               {/* CTA Button - Both mobile and desktop */}
-              <Button asChild className="text-sm sm:text-base px-3 py-4 md:pl-4 md:pr-2 md:py-4 rounded-xl">
+              <Button asChild variant="outline" className="text-sm sm:text-base px-3 py-4 md:pl-4 md:pr-2 md:py-4 rounded-xl">
                 <Link href="/sign-in">
                   Login
                   <div className="ml-2 w-4 h-4 sm:w-6 sm:h-6 bg-foreground/10 rounded-md flex items-center justify-center">
@@ -110,6 +117,14 @@ export function Navbar({ currentPage }: NavbarProps) {
                 >
                   Components
                 </Link>
+                <a
+                  href="/blogs"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Blogs
+                </a>
+        
               </div>
             </div>
           )}
