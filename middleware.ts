@@ -39,13 +39,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // If hitting root '/':
+  // Allow everyone to access root '/' - no redirect
   if (request.nextUrl.pathname === '/') {
-    // Authenticated users go to /home
-    if (user) {
-      return NextResponse.redirect(new URL('/home', request.url))
-    }
-    // Guests stay on '/'
     return response
   }
 

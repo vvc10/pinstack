@@ -10,6 +10,7 @@ import { VideoLightbox } from "@/components/reels/video-lightbox"
 import { ShareMenu } from "@/components/pin/share-menu"
 import { EditPinModal } from "@/components/pin/edit-pin-modal"
 import { PreviewModal } from "@/components/pin/preview-modal"
+import { LoginModal } from "@/components/auth/login-modal"
 import type { Pin } from "../../types/pin"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -50,6 +51,7 @@ export function PinCard({
   const [previewOpen, setPreviewOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   const { user } = useAuth()
 
@@ -134,6 +136,11 @@ export function PinCard({
   }, [router, pin.id])
 
   const handleLike = useCallback(async () => {
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
+    
     if (!currentUserId) {
       console.log('❌ No currentUserId, cannot like')
       return
@@ -199,12 +206,36 @@ export function PinCard({
   }, [pin.id, pin.title, currentUserId, isLiked, broadcastVote])
 
   const handleShare = useCallback(() => {
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
     setShareOpen(true)
-  }, [])
+  }, [user])
 
   const handlePreview = useCallback(() => {
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
     setPreviewOpen(true)
-  }, [])
+  }, [user])
+  
+  const handleEdit = useCallback(() => {
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
+    setEditOpen(true)
+  }, [user])
+  
+  const handleSave = useCallback(() => {
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
+    setSaveOpen(true)
+  }, [user])
 
   return (
     <>
@@ -260,11 +291,7 @@ export function PinCard({
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
-                  console.log('✅ Edit button clicked - Opening edit modal for pin:', pin.id)
-                  console.log('User ID:', user.id, 'Pin Author ID:', pin.author_id)
-                  console.log('Current editOpen state:', editOpen)
-                  setEditOpen(true)
-                  console.log('Called setEditOpen(true)')
+                  handleEdit()
                 }}
                 aria-label="Edit pin"
               >
@@ -450,6 +477,7 @@ export function PinCard({
         url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${pin.id}`}
         title={pin.title}
       />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </>
   )
 }

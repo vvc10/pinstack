@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 // Exact component types from create pin modal
@@ -23,6 +24,29 @@ interface FiltersBarProps {
 
 export function FiltersBar({ selectedTags, onTagToggle, onClearAll }: FiltersBarProps) {
   const [showAllTags, setShowAllTags] = useState(false)
+  const [tagCounts, setTagCounts] = useState<Record<string, number>>({})
+  const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams()
+  
+  // Fetch tag counts
+  useEffect(() => {
+    const fetchTagCounts = async () => {
+      try {
+        setLoading(true)
+        const q = searchParams.get("q") || ""
+        const response = await fetch(`/api/pins/tag-counts?q=${encodeURIComponent(q)}`)
+        const data = await response.json()
+        setTagCounts(data.counts || {})
+      } catch (error) {
+        console.error('Error fetching tag counts:', error)
+        setTagCounts({})
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchTagCounts()
+  }, [searchParams])
   
   const visibleTags = showAllTags ? COMPONENT_TYPES : COMPONENT_TYPES.slice(0, MAX_VISIBLE_TAGS)
   const remainingCount = COMPONENT_TYPES.length - MAX_VISIBLE_TAGS
@@ -34,19 +58,25 @@ export function FiltersBar({ selectedTags, onTagToggle, onClearAll }: FiltersBar
          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:overflow-x-visible md:pb-0">
           {visibleTags.map((tag) => {
             const isSelected = selectedTags.includes(tag)
+            const count = tagCounts[tag] || 0
+            const hasCount = !loading && count > 0
+            
             return (
               <Button
                 key={tag}
                 variant={isSelected ? "default" : "outline"}
                 size="sm"
                 onClick={() => onTagToggle(tag)}
-                className={`text-xs rounded-xl transition-all cursor-pointer flex-shrink-0 ${
+                className={`text-xs rounded-xl transition-all flex-shrink-0 ${
                   isSelected 
-                    ? "bg-primary/80 text-primary-foreground shadow-sm" 
-                    : "hover:bg-zinc-400 dark:hover:bg-zinc-600"
+                    ? "bg-primary/80 text-primary-foreground shadow-sm cursor-pointer" 
+                    : hasCount
+                    ? "hover:bg-zinc-400 dark:hover:bg-zinc-600 cursor-pointer"
+                    : "opacity-50 cursor-not-allowed"
                 }`}
+                disabled={loading || (!hasCount && !isSelected)}
               >
-                {tag}
+                {tag} {hasCount && <span className="ml-1 opacity-70">{count}</span>}
               </Button>
             )
           })}

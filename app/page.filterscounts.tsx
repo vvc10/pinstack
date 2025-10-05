@@ -11,7 +11,8 @@ import { MasonrySkeleton } from "@/components/skeletons/masonry-skeleton"
 import { PinCard } from "@/components/pin/pin-card"
 import { FiltersBar } from "@/components/filters-bar"
 import { AppLayout } from "@/components/layout/app-layout"
-import type { Pin } from "../../types/pin"
+import { AuthGuard } from "@/components/auth/auth-guard"
+import type { Pin } from "../types/pin"
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json())
 const PAGE_SIZE = 18
@@ -58,7 +59,7 @@ function HomePageContent() {
       params.delete("category")
     }
     
-    router.push(`/home?${params.toString()}`)
+    router.push(`/?${params.toString()}`)
   }
 
   // Handle clear all
@@ -70,7 +71,7 @@ function HomePageContent() {
     params.delete("category")
     params.delete("q")
     
-    router.push(`/home?${params.toString()}`)
+    router.push(`/?${params.toString()}`)
   }
 
   // Generate API key for SWR
@@ -153,7 +154,7 @@ function HomePageContent() {
   return (
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
       <div className="space-y-6">
-        {/* Filter Bar */}
+        {/* Filter Bar with Counts */}
         <FiltersBar
           selectedTags={selectedTags}
           onTagToggle={handleTagToggle}
@@ -220,5 +221,9 @@ function HomePageContent() {
 }
 
 export default function HomePage() {
-  return <HomePageContent />
+  return (
+    <AuthGuard>
+      <HomePageContent />
+    </AuthGuard>
+  )
 }

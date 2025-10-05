@@ -24,8 +24,8 @@ import type { Pin } from "@/types/pin"
 import { AppLayout } from "@/components/layout/app-layout"
 import { useRealtimeVotes } from "@/hooks/use-realtime-votes"
 import { useAuth } from "@/contexts/auth-context"
-import { AuthGuard } from "@/components/auth/auth-guard"
 import { useSavedPins } from "@/hooks/use-saved-pins"
+import { LoginModal } from "@/components/auth/login-modal"
 import { Edit, ArrowLeft, Heart, MessageCircle, Share2, Bookmark, ExternalLink, MoreHorizontal } from "lucide-react"
 
 export default function PinDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -42,6 +42,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [boardModalOpen, setBoardModalOpen] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Real-time votes for this pin
   const { voteCount: realtimeVoteCount, isLiked, isConnected, currentUserId, broadcastVote } = useRealtimeVotes(id)
@@ -77,7 +78,11 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
   }, [id, user])
 
   const handleSavePin = async () => {
-    if (!user || isSaving || !pin) return
+    if (!user) {
+      setLoginModalOpen(true)
+      return
+    }
+    if (isSaving || !pin) return
 
     setIsSaving(true)
     try {
@@ -137,8 +142,7 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
 
 
   return (
-    <AuthGuard>
-      <AppLayout currentTab="home">
+    <AppLayout currentTab="home">
         <main className="min-h-screen bg-background">
 
           {/* Main Content Area */}
@@ -164,50 +168,63 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                     <span className="font-medium text-foreground">{pin.title}</span>
                   </div>
                   {/* Save Buttons - Top Right */}
-                  {user && (
-                    <div className="z-10 flex items-center gap-2">
-                      {/* More Options Button */}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setBoardModalOpen(true)}
-                        className="rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm cursor-pointer"
-                      >
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
+                  <div className="z-10 flex items-center gap-2">
+                    {/* More Options Button */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        if (!user) {
+                          setLoginModalOpen(true)
+                          return
+                        }
+                        setBoardModalOpen(true)
+                      }}
+                      className="rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm cursor-pointer"
+                    >
+                      <MoreHorizontal className="w-4 h-4" />
+                    </Button>
 
-                      {/* Edit Button - Only show for pin owner */}
-                      {user && pin.author_id === user.id && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            e.preventDefault()
-                            setEditOpen(true)
-                          }}
-                          className="flex items-center gap-2 px-4 py-4 bg-card rounded-xl cursor-pointer border border-border hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 hover:text-zinc-700 dark:text-zinc-50 transition-all duration-200 hover:scale-105"
-                        >
-                          <Edit className="w-4 h-4" />
-                          <span className="hidden sm:inline">Edit</span>
-                        </Button>
-                      )}
-
-                      <ShareMenu
-                        url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${id}`}
-                        title={pin.title}
-                      />
-                      {/* Like Button */}
+                    {/* Edit Button - Only show for pin owner */}
+                    {user && pin.author_id === user.id && (
                       <Button
-                        disabled={!currentUserId}
                         variant="outline"
                         size="sm"
-                        className={`flex items-center gap-2 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer ${isLiked ? 'text-red-500 border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800' : ''}`}
-                        onClick={async (e) => {
+                        onClick={(e) => {
                           e.stopPropagation()
                           e.preventDefault()
+                          if (!user) {
+                            setLoginModalOpen(true)
+                            return
+                          }
+                          setEditOpen(true)
+                        }}
+                        className="flex items-center gap-2 px-4 py-4 bg-card rounded-xl cursor-pointer border border-border hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-700 hover:text-zinc-700 dark:text-zinc-50 transition-all duration-200 hover:scale-105"
+                      >
+                        <Edit className="w-4 h-4" />
+                        <span className="hidden sm:inline">Edit</span>
+                      </Button>
+                    )}
 
-                          if (!currentUserId) return
+                    <ShareMenu
+                      url={`${typeof window !== 'undefined' ? window.location.origin : ''}/pin/${id}`}
+                      title={pin.title}
+                    />
+                    {/* Like Button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`flex items-center gap-2 rounded-xl hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 cursor-pointer ${isLiked ? 'text-red-500 border-red-200 bg-red-50 dark:bg-red-950 dark:border-red-800' : ''}`}
+                      onClick={async (e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+
+                        if (!user) {
+                          setLoginModalOpen(true)
+                          return
+                        }
+
+                        if (!currentUserId) return
 
                           // Optimistic update - immediately show the new state
                           const newIsLiked = !isLiked
@@ -240,31 +257,30 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                       >
                         <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
                         <span className="hidden sm:inline">{realtimeVoteCount}</span>
-                      </Button>
+                    </Button>
 
-                      {/* Save Button */}
-                      <Button
-                        size="sm"
-                        disabled={isSaving}
-                        onClick={handleSavePin}
-                        className={`flex items-center gap-2 rounded-xl shadow-lg transition-all duration-200 ${isSaved
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                          : 'bg-primary text-primary-foreground hover:bg-primary/90'
-                          } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                      >
-                        {isSaving ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                          </>
-                          // <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
-                        )}
-                        <span className="text-sm font-medium">
-                          {isSaving ? '' : isSaved ? 'Saved' : 'Save'}
-                        </span>
-                      </Button>
-                    </div>
-                  )}
+                    {/* Save Button */}
+                    <Button
+                      size="sm"
+                      disabled={isSaving}
+                      onClick={handleSavePin}
+                      className={`flex items-center gap-2 rounded-xl shadow-lg transition-all duration-200 ${isSaved
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        } ${isSaving ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      {isSaving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                        </>
+                        // <Bookmark className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
+                      )}
+                      <span className="text-sm font-medium">
+                        {isSaving ? '' : isSaved ? 'Saved' : 'Save'}
+                      </span>
+                    </Button>
+                  </div>
 
                 </div>
 
@@ -386,12 +402,26 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                     <TabsList className={`grid w-full h-fit ${pin.videoUrl ? 'grid-cols-4' : 'grid-cols-3'} bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-1`}>
                       <TabsTrigger
                         value="code"
+                        onClick={(e) => {
+                          if (!user) {
+                            e.preventDefault()
+                            setLoginModalOpen(true)
+                            return
+                          }
+                        }}
                         className="rounded-2xl px-3 py-2 text-sm font-medium data-[state=active]:bg-zinc-200 data-[state=active]:text-zinc-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-600 dark:data-[state=active]:text-zinc-100 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         Code
                       </TabsTrigger>
                       <TabsTrigger
                         value="figma"
+                        onClick={(e) => {
+                          if (!user) {
+                            e.preventDefault()
+                            setLoginModalOpen(true)
+                            return
+                          }
+                        }}
                         className="rounded-2xl px-3 py-2 text-sm font-medium data-[state=active]:bg-zinc-200 data-[state=active]:text-zinc-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-600 dark:data-[state=active]:text-zinc-100 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         Figma
@@ -399,6 +429,13 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                       {pin.videoUrl ? (
                         <TabsTrigger
                           value="video"
+                          onClick={(e) => {
+                            if (!user) {
+                              e.preventDefault()
+                              setLoginModalOpen(true)
+                              return
+                            }
+                          }}
                           className="rounded-2xl px-3 py-2 text-sm font-medium data-[state=active]:bg-zinc-200 data-[state=active]:text-zinc-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-600 dark:data-[state=active]:text-zinc-100 text-muted-foreground hover:text-foreground transition-colors"
                         >
                           Video
@@ -406,6 +443,13 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                       ) : null}
                       <TabsTrigger
                         value="playground"
+                        onClick={(e) => {
+                          if (!user) {
+                            e.preventDefault()
+                            setLoginModalOpen(true)
+                            return
+                          }
+                        }}
                         className="rounded-2xl px-3 py-2 text-sm font-medium data-[state=active]:bg-zinc-200 data-[state=active]:text-zinc-700 data-[state=active]:shadow-sm dark:data-[state=active]:bg-zinc-600 dark:data-[state=active]:text-zinc-100 text-muted-foreground hover:text-foreground transition-colors"
                       >
                         Playground
@@ -529,8 +573,14 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
                           </p>
                           <Button
                             size="lg"
-                            onClick={() => setPreviewOpen(true)}
-                            className="bg-primary text-primary-foreground font-medium px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors"
+                            onClick={() => {
+                              if (!user) {
+                                setLoginModalOpen(true)
+                                return
+                              }
+                              setPreviewOpen(true)
+                            }}
+                            className="bg-primary text-primary-foreground font-medium px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors cursor-pointer"
                           >
                             <BlocksIcon/>
                             Open Playground
@@ -564,7 +614,9 @@ export default function PinDetailPage({ params }: { params: Promise<{ id: string
             pin={pin}
           />
         )}
+        
+        {/* Login Modal */}
+        <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
       </AppLayout>
-    </AuthGuard>
   )
 }
