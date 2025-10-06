@@ -167,8 +167,8 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
-                  >
+                    className="w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12 rounded-2xl cursor-pointer text-zinc-200 dark:text-zinc-200 bg-zinc-800 hover:bg-zinc-900 dark:bg-zinc-200 dark:hover:bg-zinc-300 transition-all duration-200"
+                    >
                     <Avatar className="h-6 w-6 rounded-xl">
                       <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
                       <AvatarFallback className="rounded-full">
@@ -199,7 +199,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               <Button
                 variant="ghost"
                 size="icon"
-                className="w-10 h-10 rounded-xl border border-transparent cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
+                className="w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12 rounded-2xl cursor-pointer text-zinc-200 dark:text-zinc-200 bg-zinc-800 hover:bg-zinc-900 dark:bg-zinc-200 dark:hover:bg-zinc-300 transition-all duration-200"
                 onClick={() => setLoginModalOpen(true)}
               >
                 <User className="h-4 w-4" />
