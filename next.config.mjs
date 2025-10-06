@@ -2,7 +2,6 @@ import path from "path";
 import fs from "fs";
 
 const nextConfig = {
-  distDir: "dist",
   productionBrowserSourceMaps: process.env.NODE_ENV === "production",
   reactStrictMode: false,
   typescript: {
