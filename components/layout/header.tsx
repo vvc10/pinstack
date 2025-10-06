@@ -122,7 +122,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
 
                 {/* Text */}
                 <span className="text-xs sm:text-base italic h-fit my-auto text-zinc-700 dark:text-zinc-300 font-normal">
-                  100+ building stunning UI daily 
+                  110+ creatives on it! 
                 </span>
               </div>
             )}
