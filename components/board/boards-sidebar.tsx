@@ -10,15 +10,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { toast } from "sonner"
-import { 
-  Home, 
-  Clock, 
-  Users, 
-  MessageCircle, 
-  Bell, 
-  Rocket, 
-  Settings, 
-  BarChart3, 
+import {
+  Home,
+  Clock,
+  Users,
+  MessageCircle,
+  Bell,
+  Rocket,
+  Settings,
+  BarChart3,
   ChevronRight,
   Plus,
   ChevronLeft,
@@ -54,7 +54,7 @@ export function useSidebar() {
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  
+
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
       {children}
@@ -62,13 +62,13 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function BoardsSidebar({ 
-  isMobileOpen, 
+export function BoardsSidebar({
+  isMobileOpen,
   onMobileClose,
   currentTab = "home"
-}: { 
-  isMobileOpen?: boolean; 
-  onMobileClose?: () => void; 
+}: {
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
   currentTab?: string;
 }) {
   const [mounted, setMounted] = useState(false)
@@ -78,7 +78,7 @@ export function BoardsSidebar({
   const [loading, setLoading] = useState(false)
   const [boardsExpanded, setBoardsExpanded] = useState(false)
   const { isCollapsed, setIsCollapsed } = useSidebar()
-  
+
   // Suggestion modal state
   const [showSuggestionModal, setShowSuggestionModal] = useState(false)
   const [suggestionType, setSuggestionType] = useState("suggestion")
@@ -117,7 +117,7 @@ export function BoardsSidebar({
       toast.error("Please fill all fields", { description: "Select a type and provide a description." })
       return
     }
-    
+
     setSubmittingSuggestion(true)
     try {
       const response = await fetch("/api/suggestions", {
@@ -137,18 +137,18 @@ export function BoardsSidebar({
       }
 
       const result = await response.json()
-      
-      toast.success("Suggestion submitted!", { 
-        description: "Thank you for your feedback. We'll review it soon." 
+
+      toast.success("Suggestion submitted!", {
+        description: "Thank you for your feedback. We'll review it soon."
       })
-      
+
       setSuggestionType("")
       setSuggestionDescription("")
       setShowSuggestionModal(false)
     } catch (error) {
       console.error("Error submitting suggestion:", error)
-      toast.error("Failed to submit suggestion", { 
-        description: error instanceof Error ? error.message : "Please try again later." 
+      toast.error("Failed to submit suggestion", {
+        description: error instanceof Error ? error.message : "Please try again later."
       })
     } finally {
       setSubmittingSuggestion(false)
@@ -156,9 +156,8 @@ export function BoardsSidebar({
   }
 
   const sidebarContent = (
-    <aside aria-label="Sidebar" className={`h-full transition-all duration-300 z-[9999] ease-in-out ${
-      isCollapsed ? 'w-16' : 'w-64'
-    }`}>
+    <aside aria-label="Sidebar" className={`hidden md:block h-full transition-all duration-300 z-[9999] ease-in-out ${isCollapsed ? 'w-16' : 'w-64'
+      }`}>
       {/* Collapse Toggle Button - Hidden on Mobile */}
       <div className="absolute -right-3 top-6 z-[9999] hidden md:block">
         <Button
@@ -175,15 +174,13 @@ export function BoardsSidebar({
         </Button>
       </div>
 
-      <div className={`h-full overflow-hidden transition-all duration-300 ease-in-out flex flex-col ${
-        isCollapsed ? 'px-2' : 'px-4'
-      }`}>
+      <div className={`h-full overflow-hidden transition-all duration-300 ease-in-out flex flex-col ${isCollapsed ? 'px-2' : 'px-4'
+        }`}>
         {/* Main Content - Scrollable */}
         <div className="flex-1 overflow-y-auto">
           {/* Branding Section */}
-          <div className={`flex items-center gap-3 py-4 ${
-            isCollapsed ? 'justify-center' : ''
-          }`}>
+          <div className={`flex items-center gap-3 py-4 ${isCollapsed ? 'justify-center' : ''
+            }`}>
             <div className="h-10 w-10 font-garamond rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
               <span className="text-primary-foreground font-bold text-xl">Ps.</span>
             </div>
@@ -194,30 +191,35 @@ export function BoardsSidebar({
 
           {/* Main Navigation */}
           <nav className="space-y-1">
-          <Link
-            href="/home"
-            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
-              currentTab === "home" 
-                ? 'bg-primary/10 text-primary font-medium' 
-                : 'text-muted-foreground hover:bg-muted'
-            } ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            <Home className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span>Home</span>}
-          </Link>
-          <Link
-            href="/recent"
-            className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
-              currentTab === "recent" 
-                ? 'bg-primary/10 text-primary font-medium' 
-                : 'text-muted-foreground hover:bg-muted'
-            } ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            <Clock className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span>Recent</span>}
-          </Link>
-          {/* Will implement later */}
-          {/* <Link
+            <Link
+              href="/home"
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${currentTab === "home"
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-muted'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              <Home
+                className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${currentTab === "home" ? "fill-primary text-primary" : ""
+                  }`}
+              />
+              {!isCollapsed && <span>Home</span>}
+            </Link>
+
+            <Link
+              href="/recent"
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${currentTab === "recent"
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-muted'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              <Clock
+                className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${currentTab === "recent" ? "fill-primary text-primary" : ""
+                  }`}
+              />
+              {!isCollapsed && <span>Recent</span>}
+            </Link>
+            {/* Will implement later */}
+            {/* <Link
             href="/following"
             className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
               currentTab === "following" 
@@ -228,7 +230,7 @@ export function BoardsSidebar({
             <Users className="h-5 w-5 flex-shrink-0" />
             {!isCollapsed && <span>Following</span>}
           </Link> */}
-{/*           
+            {/*           
           <Link
             href="/learnings"
             className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors ${
@@ -253,36 +255,38 @@ export function BoardsSidebar({
             {!isCollapsed && <span>Reels</span>}
           </Link> */}
 
-          <Link
-            href="/yourpins"
-            className={`flex items-center gap-3 px-3 py-3 rounded-xl   transition-colors ${
-              currentTab === "yourpins" 
-                ? 'bg-primary/10 text-primary font-medium' 
-                : 'text-muted-foreground hover:bg-muted'
-            } ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            <Bookmark className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span>Your Pins</span>}
-          </Link>
+            <Link
+              href="/yourpins"
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl   transition-colors ${currentTab === "yourpins"
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-muted'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              <Bookmark
+                className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${currentTab === "yourpins" ? "fill-primary text-primary" : ""
+                  }`}
+              />            {!isCollapsed && <span>Your Pins</span>}
+            </Link>
 
-          <Link
-                href="/boards"
-                  className={`flex items-center gap-3 px-3 py-3 rounded-xl  transition-colors ${
-              currentTab === "boards" 
-                ? 'bg-primary/10 text-primary font-medium' 
-                : 'text-muted-foreground hover:bg-muted'
-            } ${isCollapsed ? 'justify-center' : ''}`}
-          >
-            <LayoutDashboard className="h-5 w-5 flex-shrink-0" />
-            {!isCollapsed && <span>Boards</span>}
-          </Link>
-        </nav>
+            <Link
+              href="/boards"
+              className={`flex items-center gap-3 px-3 py-3 rounded-xl  transition-colors ${currentTab === "boards"
+                  ? 'bg-primary/10 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-muted'
+                } ${isCollapsed ? 'justify-center' : ''}`}
+            >
+              <LayoutDashboard
+                className={`h-5 w-5 flex-shrink-0 transition-all duration-200 ${currentTab === "boards" ? "fill-primary text-primary" : ""
+                  }`}
+              />            {!isCollapsed && <span>Boards</span>}
+            </Link>
+          </nav>
 
 
- 
 
-        {/* Insights Section */}
-        {/* {!isCollapsed && (
+
+          {/* Insights Section */}
+          {/* {!isCollapsed && (
           <div className="space-y-1 mt-6">
             <h3 className="text-sm font-medium text-muted-foreground px-3">Insights</h3>
             <Link
@@ -346,21 +350,21 @@ export function BoardsSidebar({
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                <Link 
-                  href="https://x.com/pankajstwt" 
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors duration-200"
-                >
-                  Help Center
-                </Link>
+                  <Link
+                    href="https://x.com/pankajstwt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-zinc-700 dark:text-zinc-300 text-sm font-medium hover:text-zinc-800 dark:hover:text-zinc-200 transition-colors duration-200"
+                  >
+                    Help Center
+                  </Link>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
                     Get support & guides
                   </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900/50 dark:to-zinc-800/50 border border-zinc-200/50 dark:border-zinc-700/50 rounded-lg p-3 mx-3 mb-4 flex-shrink-0 hover:shadow-md transition-all duration-200 cursor-pointer" onClick={openSuggestionModal}>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-zinc-600 to-zinc-700 dark:from-zinc-500 dark:to-zinc-600 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -382,8 +386,8 @@ export function BoardsSidebar({
         ) : (
           // Collapsed state - show only icons
           <div className="flex flex-col gap-2 px-2 mt-4 mb-4">
-            <Link 
-              href="https://x.com/pankajstwt" 
+            <Link
+              href="https://x.com/pankajstwt"
               target="_blank"
               rel="noopener noreferrer"
               className="w-10 h-10 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
@@ -393,8 +397,8 @@ export function BoardsSidebar({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </Link>
-            
-            <button 
+
+            <button
               onClick={openSuggestionModal}
               className="w-10 h-10 border border-zinc-200 dark:border-zinc-700 rounded-lg flex items-center justify-center hover:shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-all duration-200 group"
               title="Share Suggestion"
@@ -417,11 +421,10 @@ export function BoardsSidebar({
         {isMobileOpen && (
           <div className="fixed inset-0 bg-background/50 z-[9998] md:hidden" onClick={onMobileClose} />
         )}
-        
+
         {/* Mobile Sidebar */}
-        <div className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-[9999] transform transition-transform duration-300 ease-in-out md:hidden ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}>
+        <div className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-[9999] transform transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -446,62 +449,62 @@ export function BoardsSidebar({
     )
   }
 
-    // Desktop sidebar - Fixed positioning
-    return (
-      <>
-        <div className="fixed left-0 top-0 h-full bg-background border-r z-[9999]">
-          {sidebarContent}
-        </div>
-        
-        {/* Suggestion Modal */}
-        <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Share Your Feedback</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="suggestion-type">Type</Label>
-                <Select value={suggestionType} onValueChange={setSuggestionType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="feature-request">Feature Request</SelectItem>
-                    <SelectItem value="suggestion">Suggestion</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="suggestion-description">Description</Label>
-                <Textarea
-                  id="suggestion-description"
-                  placeholder="Describe your idea or feedback..."
-                  value={suggestionDescription}
-                  onChange={(e) => setSuggestionDescription(e.target.value)}
-                  className="min-h-[100px]"
-                />
-              </div>
-              
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowSuggestionModal(false)}
-                  disabled={submittingSuggestion}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={submitSuggestion}
-                  disabled={submittingSuggestion || !suggestionType || !suggestionDescription.trim()}
-                >
-                  {submittingSuggestion ? "Submitting..." : "Submit"}
-                </Button>
-              </div>
+  // Desktop sidebar - Fixed positioning
+  return (
+    <>
+      <div className="fixed left-0 top-0 h-full bg-background border-r z-[9999]">
+        {sidebarContent}
+      </div>
+
+      {/* Suggestion Modal */}
+      <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share Your Feedback</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="suggestion-type">Type</Label>
+              <Select value={suggestionType} onValueChange={setSuggestionType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="feature-request">Feature Request</SelectItem>
+                  <SelectItem value="suggestion">Suggestion</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          </DialogContent>
-        </Dialog>
-      </>
-    )
+
+            <div className="space-y-2">
+              <Label htmlFor="suggestion-description">Description</Label>
+              <Textarea
+                id="suggestion-description"
+                placeholder="Describe your idea or feedback..."
+                value={suggestionDescription}
+                onChange={(e) => setSuggestionDescription(e.target.value)}
+                className="min-h-[100px]"
+              />
+            </div>
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowSuggestionModal(false)}
+                disabled={submittingSuggestion}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={submitSuggestion}
+                disabled={submittingSuggestion || !suggestionType || !suggestionDescription.trim()}
+              >
+                {submittingSuggestion ? "Submitting..." : "Submit"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  )
 }

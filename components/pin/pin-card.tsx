@@ -345,43 +345,46 @@ export function PinCard({
 
           {/* Center Copy Button - Visible on Hover */}
           <div
-            className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
-          >
-            <Button
-              size="icon"
-              variant="secondary"
-              className={`h-fit w-fit px-2 py-2 rounded-xl shadow-lg backdrop-blur-sm z-20 transition-all duration-200 cursor-pointer hover:scale-110 pointer-events-auto dark:bg-zinc-200 ${copied
-                  ? 'bg-green-500/90 hover:bg-green-500 text-white'
-                  : 'bg-card/90 hover:bg-card'
-                }`}
-              onClick={(e) => {
-                e.stopPropagation()
-                navigator.clipboard.writeText(pin.code)
-                setCopied(true)
-                toast.success("📋 Code Copied!", {
-                  description: `"${pin.title}" code has been copied to clipboard`,
-                  duration: 3000,
-                })
-                // Reset the copied state after 2 seconds
-                setTimeout(() => {
-                  setCopied(false)
-                }, 2000)
-              }}
-              aria-label={copied ? "Copied!" : "Copy code"}
-            >
-              {copied ? (
-                <div className="flex items-center gap-1 dark:text-zinc-800">
-                  <Check className="h-4 w-4" />
-                  <span className="text-xs font-medium">Copied</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 dark:text-zinc-800">
-                  <Code className="h-4 w-4" />
-                  <span className="text-xs font-medium">Copy</span>
-                </div>
-              )}
-            </Button>
-          </div>
+  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 pointer-events-none"
+>
+  <Button
+    size="icon"
+    variant="secondary"
+    className={`h-fit w-fit px-2 py-2 rounded-xl shadow-lg backdrop-blur-sm z-20 transition-all duration-200 cursor-pointer hover:scale-110 pointer-events-auto dark:bg-zinc-200 ${
+      copied ? 'bg-green-500/90 hover:bg-green-500 text-white' : 'bg-card/90 hover:bg-card'
+    }`}
+    onClick={(e) => {
+      e.stopPropagation();
+      if (!user) {
+        setLoginModalOpen(true);
+        return;
+      }
+      navigator.clipboard.writeText(pin.code);
+      setCopied(true);
+      toast.success("📋 Code Copied!", {
+        description: `"${pin.title}" code has been copied to clipboard`,
+        duration: 3000,
+      });
+      // Reset the copied state after 2 seconds
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }}
+    aria-label={copied ? "Copied!" : "Copy code"}
+  >
+    {copied ? (
+      <div className="flex items-center gap-1 dark:text-zinc-800">
+        <Check className="h-4 w-4" />
+        <span className="text-xs font-medium">Copied</span>
+      </div>
+    ) : (
+      <div className="flex items-center gap-2 dark:text-zinc-800">
+        <Code className="h-4 w-4" />
+        <span className="text-xs font-medium">Copy</span>
+      </div>
+    )}
+  </Button>
+</div>
         </button>
 
         {/* Save/Remove Button - Only show on hover */}

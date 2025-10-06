@@ -1,14 +1,66 @@
-/** @type {import('next').NextConfig} */
+import path from "path";
+import fs from "fs";
+
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  distDir: "dist",
+  productionBrowserSourceMaps: process.env.NODE_ENV === "production",
+  reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: true,
   },
-  images: {
-    unoptimized: true,
+  eslint: {
+    ignoreDuringBuilds: true,
   },
-}
+  env: {},
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
+  },
+  webpack: (config, options) => {
+    config.devtool =
+      process.env.NODE_ENV === "production" ? "source-map" : false;
+    config.optimization = {
+      ...config.optimization,
+      minimize: false,
+    };
+    config.plugins = config.plugins || [];
+    config.module = config.module || { rules: [] };
+    config.module.rules = config.module.rules || [];
 
-export default nextConfig
+    const fileLoaderRule = config.module.rules.find(
+      (rule) =>
+        typeof rule === "object" &&
+        rule !== null &&
+        rule.test instanceof RegExp &&
+        rule.test.test(".svg"),
+    );
+    if (fileLoaderRule && typeof fileLoaderRule === "object") {
+      fileLoaderRule.exclude = /\.svg$/i;
+    }
+    config.module.rules.push(
+      {
+        test: /\.svg$/i,
+        resourceQuery: /url/,
+        type: "asset/resource",
+      },
+      //      {
+      //        test: /\.svg$/i,
+      //        issuer: /\.[jt]sx?$/,
+      //        resourceQuery: { not: [/url/] },
+      //        use: ["@svgr/webpack"],
+      //      }
+    );
+
+    return config;
+  },
+};
+
+export default nextConfig;
