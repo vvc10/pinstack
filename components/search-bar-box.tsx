@@ -78,36 +78,32 @@ export function SearchBoxBar({ sort = "trending", onSortChange, isScrolled }: Se
 
   return (
     <div
-      className={`w-full transition-all duration-300  ease-in-out ${
+      className={`w-full transition-all duration-300 ease-in-out ${
         isScrolled
-          ? "fixed w-fit top-0 left-0 right-0 z-50 rounded-[0px] backdrop-blur-none bg-zinc-100/50 dark:bg-zinc-800/50 h-16 py-2"
-          : "relative h-[100px] py-2 rounded-2xl"
-      } border-0 text-foreground dark:text-white overflow-hidden`}
- 
+          ? "fixed w-fit top-0 left-0 right-0 z-50 rounded-none bg-background/0 h-14 py-2"
+          : "relative h-[80px] md:h-[70px] py-2"
+      } overflow-hidden`}
     >
-   <div
-  className={`absolute transition-all duration-300 ${
-    isScrolled
-      ? "w-[70%] sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[70%] 2xl:w-[80%] ml-[60px] md:ml-4"
-      : "w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%] ml-auto bottom-8"
-  }`}
->
-
+      <div
+        className={`relative md:relative mx-auto transition-all duration-300 ${
+          isScrolled
+            ? "w-[80%] sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[70%] 2xl:w-[80%] ml-[60px] md:ml-4"
+            : "w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%] mx-auto"
+        }`}
+      >
         <Search
           className={`size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2 transition-all duration-300 ${
             isScrolled ? "size-4" : ""
           }`}
+          aria-hidden="true"
         />
         <input
           ref={inputRef}
           aria-label="Search"
           placeholder="Search pins, tags, languages..."
-          className={`w-full rounded-2xl border-2 bg-zinc-50 border-zinc-300/30 dark:border-zinc-300/5 dark:bg-zinc-800/80 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gradient-to-r focus:ring-from-purple-500 focus:ring-to-blue-500 transition-all duration-200 ${
-            isScrolled ? "pl-10 pr-12 py-3 text-sm" : "pl-12 pr-16 py-3 text-base"
+          className={`w-full rounded-2xl border border-border bg-card text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background transition-all duration-200 shadow-sm ${
+            isScrolled ? "pl-10 pr-14 py-3 text-sm" : "pl-12 pr-20 py-3.5 text-base"
           }`}
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E')`,
-          }}
           value={q}
           onChange={(e) => setQ(e.target.value)}
           onKeyDown={(e) => {
@@ -124,6 +120,16 @@ export function SearchBoxBar({ sort = "trending", onSortChange, isScrolled }: Se
           }}
         />
         <div
+          className={`absolute right-10 top-1/2 -translate-y-1/2 hidden md:flex items-center text-muted-foreground ${
+            isScrolled ? "right-8" : "right-10"
+          }`}
+          aria-hidden="true"
+        >
+          <span className="inline-flex mr-3 items-center rounded-xl border border-border bg-muted px-4 py-3 text-[11px] leading-none">
+            /
+          </span>
+        </div>
+        <div
           className={`absolute right-2 top-1/2 -translate-y-1/2 transition-all duration-300 ${
             isScrolled ? "right-1" : ""
           }`}
@@ -133,29 +139,20 @@ export function SearchBoxBar({ sort = "trending", onSortChange, isScrolled }: Se
               <Button
                 variant="ghost"
                 size="icon"
-                className={`rounded-xl bg-transparent hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 border-0 transition-all duration-200 ${
-                  isScrolled ? "w-8 h-8" : "w-10 h-10"
-                }`}
+                aria-label="Sort"
+                aria-expanded={sortOpen}
+                className="inline-flex items-center rounded-xl border border-border bg-muted px-4 py-3 text-[11px] leading-none"
               >
-                <ArrowUpDown
-                  className={`text-muted-foreground ${isScrolled ? "size-3" : "size-4"}`}
-                />
+                <ArrowUpDown className={`text-muted-foreground ${isScrolled ? "size-3" : "size-4"}`} />
               </Button>
             </PopoverTrigger>
-            <PopoverContent
-              className={`w-40 p-1 bg-zinc-100/80 dark:bg-zinc-800/80 backdrop-blur-md`}
-              style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E')`,
-              }}
-            >
+            <PopoverContent className="w-44 p-1 bg-popover border border-border rounded-xl">
               <div className="space-y-1">
                 {["trending", "most-voted", "newest"].map((type) => (
                   <button
                     key={type}
                     className={`w-full text-left px-3 py-2 rounded-md capitalize transition-colors ${
-                      sort === type
-                        ? "bg-zinc-400/50 dark:bg-zinc-700/50 text-zinc-700 dark:text-zinc-100"
-                        : "hover:bg-zinc-400/50 hover:dark:bg-zinc-700/50"
+                      sort === type ? "bg-muted text-foreground" : "hover:bg-muted"
                     } ${isScrolled ? "text-xs py-1.5" : "text-sm"}`}
                     onClick={() => {
                       onSortChange?.(type as any)
@@ -170,6 +167,7 @@ export function SearchBoxBar({ sort = "trending", onSortChange, isScrolled }: Se
           </Popover>
         </div>
       </div>
+      
     </div>
   )
 }

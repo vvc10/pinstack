@@ -107,7 +107,7 @@ export function MobileBottomNav({ currentTab = "home" }: MobileBottomNavProps) {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-[9999] md:hidden">
+    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border z-[9999] md:hidden rounded-tr-3xl rounded-tl-3xl">
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const Icon = item.icon

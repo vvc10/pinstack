@@ -49,10 +49,10 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
             <div 
               className="transition-all duration-300 ease-in-out"
               style={{
-                paddingTop: isNoticeBannerVisible ? '5rem' : '19rem'
+                paddingTop: isNoticeBannerVisible ? '5rem' : '26rem'
               }}
             >
-              <div className="mt-10 sm:mt-10 md:mt-2 pb-20 md:pb-0">
+              <div className="mt-24 sm:mt-10 md:mt-2 pb-20 md:pb-0">
                 {children}
               </div>
             </div>

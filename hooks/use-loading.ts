@@ -1,40 +1,39 @@
 "use client"
 
-import { useLoading } from '@/contexts/loading-context'
+import { useCallback, useRef, useState } from "react"
 
-export function useLoadingState() {
-  const { isLoading, setLoading, loadingMessage, setLoadingMessage } = useLoading()
+type LoadingState = {
+  loading: boolean
+  message?: string
+  startLoading: (message?: string) => void
+  stopLoading: () => void
+}
 
-  const startLoading = (message?: string) => {
+/**
+ * Minimal client-only loading hook to satisfy existing imports.
+ * - startLoading(message?) sets loading true and stores an optional message
+ * - stopLoading() resets loading/message
+ *
+ * This intentionally does not render any UI; integrate with a toast or overlay if needed.
+ */
+export function useLoadingState(): LoadingState {
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<string | undefined>(undefined)
+  const pendingCount = useRef(0)
+
+  const startLoading = useCallback((msg?: string) => {
+    pendingCount.current += 1
+    setMessage(msg)
     setLoading(true)
-    if (message) {
-      setLoadingMessage(message)
+  }, [])
+
+  const stopLoading = useCallback(() => {
+    pendingCount.current = Math.max(0, pendingCount.current - 1)
+    if (pendingCount.current === 0) {
+      setLoading(false)
+      setMessage(undefined)
     }
-  }
+  }, [])
 
-  const stopLoading = () => {
-    setLoading(false)
-    setLoadingMessage(undefined)
-  }
-
-  const withLoading = async <T,>(
-    asyncFn: () => Promise<T>,
-    message?: string
-  ): Promise<T> => {
-    try {
-      startLoading(message)
-      const result = await asyncFn()
-      return result
-    } finally {
-      stopLoading()
-    }
-  }
-
-  return {
-    isLoading,
-    loadingMessage,
-    startLoading,
-    stopLoading,
-    withLoading
-  }
+  return { loading, message, startLoading, stopLoading }
 }

@@ -153,13 +153,7 @@ function HomePageContent() {
   return (
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
       <div className="space-y-6">
-        {/* Filter Bar */}
-        <FiltersBar
-          selectedTags={selectedTags}
-          onTagToggle={handleTagToggle}
-          onClearAll={handleClearAll}
-        />
-
+    
         {/* Error State */}
         {error && (
           <div className="text-center py-8">

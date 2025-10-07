@@ -41,9 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${dmSans.variable} ${dmMono.variable} antialiased`}>
-        <a href="#content" className="skip-link">
-          Skip to content
-        </a>
+     
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AuthProvider>
             <NoticeBannerProvider>

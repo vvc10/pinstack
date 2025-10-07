@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
-// Exact component types from create pin modal
 const COMPONENT_TYPES = [
   "Hero", "Footer", "Navigation", "Sidebar", "Header",
   "Carousel", "Slider", "Cards", "Accordions", "Tabs", "Modals / Dialogs",
@@ -20,7 +19,7 @@ interface FiltersBarProps {
   selectedTags: string[]
   onTagToggle: (tag: string) => void
   onClearAll: () => void
-  isScrolled?: boolean // new prop
+  isScrolled?: boolean
 }
 
 export function FiltersBar({ selectedTags, onTagToggle, onClearAll, isScrolled }: FiltersBarProps) {
@@ -64,13 +63,28 @@ export function FiltersBar({ selectedTags, onTagToggle, onClearAll, isScrolled }
     <div
       className={`space-y-3 transition-all duration-300 ${
         isScrolled
-          ? "fixed top-[1.5rem] left-0 right-0 z-50 bg-zinc-100/80 dark:bg-zinc-800/80 backdrop-blur-md p-2 rounded-xl mx-4 sm:mx-6 md:mx-8"
+          ? `
+              absolute md:absolute 
+              top-[4.2rem] md:top-[4.2rem] 
+              right-3 sm:right-6 md:right-8
+              w-[88%] sm:w-[50%] md:w-[40%] lg:w-[35%]
+              bg-zinc-100/80 dark:bg-zinc-800/80
+              backdrop-blur-lg
+              border border-zinc-200/50 dark:border-zinc-700/40
+              rounded-xl
+              p-2 sm:p-2.5
+              shadow-sm
+              z-40
+            `
           : ""
       }`}
     >
-      {/* Component Types */}
       <div className="space-y-2">
-        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 md:flex-wrap md:overflow-x-visible md:pb-0">
+        <div
+          className={`flex gap-2 overflow-x-auto scrollbar-hide pb-2 ${
+            isScrolled ? "justify-end md:justify-start" : "md:flex-wrap md:overflow-x-visible md:pb-0"
+          }`}
+        >
           {visibleTags.map((tag) => {
             const isSelected = selectedTags.includes(tag)
             const count = tagCounts[tag] || 0
@@ -120,9 +134,9 @@ export function FiltersBar({ selectedTags, onTagToggle, onClearAll, isScrolled }
         </div>
       </div>
 
-      {/* Clear All Button */}
-      {selectedTags.length > 0 && (
-        <div className="flex justify-end">
+      {/* Clear All */}
+      {/* {selectedTags.length > 0 && (
+        <div className="flex justify-end mt-1">
           <Button
             variant="ghost"
             size="sm"
@@ -132,7 +146,7 @@ export function FiltersBar({ selectedTags, onTagToggle, onClearAll, isScrolled }
             Clear all ({selectedTags.length})
           </Button>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

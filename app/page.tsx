@@ -154,11 +154,7 @@ export default function HomePage() {
     <AppLayout currentTab="home" sort={sort} onSortChange={setSort}>
       <div className="space-y-6">
         {/* Filter Bar */}
-        <FiltersBar
-          selectedTags={selectedTags}
-          onTagToggle={handleTagToggle}
-          onClearAll={handleClearAll}
-        />
+ 
 
         {/* Error State */}
         {error && (
