@@ -132,7 +132,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               Beautiful UI Components, <span className="text-zinc-100  px-3 py-1 font-medium rounded-2xl bg-primary">Ready to Copy.</span>
             </h2>
             <p
-              className={`text-muted-foreground text-center w-[80%] mx-auto text-sm sm:text-base md:text-lg leading-relaxed ${isScrolled ? "hidden" : "block"
+              className={`text-zinc-600 dark:text-zinc-300 text-center w-[90%] md:w-[60%] mx-auto text-xs sm:text-base md:text-lg leading-relaxed ${isScrolled ? "hidden" : "block"
                 }`}
             >
               A premium collection of stunning, accessible, and fully customizable UI components — designed to help you
