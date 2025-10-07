@@ -419,11 +419,11 @@ export function BoardsSidebar({
       <>
         {/* Mobile Overlay */}
         {isMobileOpen && (
-          <div className="fixed inset-0 bg-background/50 z-[9998] md:hidden" onClick={onMobileClose} />
+          <div className="fixed hidden inset-0 bg-background/50 z-[9998] md:hidden" onClick={onMobileClose} />
         )}
 
         {/* Mobile Sidebar */}
-        <div className={`fixed left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-[9999] transform transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'
+        <div className={`fixed hidden left-0 top-0 h-full w-80 max-w-[85vw] bg-background border-r z-[9999] transform transition-transform duration-300 ease-in-out md:hidden ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'
           }`}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-6">

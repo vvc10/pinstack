@@ -88,7 +88,7 @@ export function SearchBoxBar({ sort = "trending", onSortChange, isScrolled }: Se
    <div
   className={`absolute transition-all duration-300 ${
     isScrolled
-      ? "w-[90%] sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[70%] 2xl:w-[80%] ml-4"
+      ? "w-[70%] sm:w-[85%] md:w-[70%] lg:w-[60%] xl:w-[70%] 2xl:w-[80%] ml-[60px] md:ml-4"
       : "w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%] ml-auto bottom-8"
   }`}
 >

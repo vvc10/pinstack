@@ -28,7 +28,7 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
         onSortChange={onSortChange}
       />
       
-      <section className="hidden md:block container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 max-w-full">
+      <section className="md:block container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 max-w-full">
         <div className="grid grid-cols-1 gap-4 sm:gap-6">
           {/* Desktop Sidebar - Fixed */}
           <div className="hidden md:block">

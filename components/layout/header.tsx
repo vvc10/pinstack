@@ -85,8 +85,13 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
           className={`container mx-auto transition-all duration-300 ease-in-out flex items-center justify-between gap-2 sm:gap-3 md:gap-4 max-w-full px-2 sm:px-3 md:px-4 ${isScrolled ? "py-2 sm:py-2.5" : "py-3 sm:py-4"
             }`}
         >
+          {/* brand logo for mobile */}
+          <div className="absolute md:hidden z-[500] lg:hidden top-2 left-2 h-10 w-10 font-garamond rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+            <span className="text-primary-foreground font-bold text-xl">Ps.</span>
+          </div>
+
           {/* Search Section */}
-          <div className="flex-1 p-4">
+          <div className="flex-1  pt-15 md:px-4 md:py-4">
             <h2 className={`text-3xl sm:text-4xl md:text-5xl font-semibold font-garamond tracking-tight mb-4 ${isScrolled ? "hidden" : "block"}`}>
               Premium UI Components, <span className="text-transparent bg-clip-text  bg-purple-500">Ready to Copy</span>.
             </h2>
@@ -98,37 +103,37 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               className={`text-zinc-600 items-center dark:text-zinc-400 text-[14px] w-[80%] sm:text-base md:text-lg leading-relaxed transition-all duration-300 ${isScrolled ? "hidden" : "block"
                 }`}
             >
-                 {!isScrolled && (
-              <div className="flex flex-row gap-2 w-fit">
-                {/* Profile Avatars */}
-                <div className="flex -space-x-2">
-                  <img
-                    src="https://pbs.twimg.com/profile_images/1952423493879894017/M6tZ4PC0_400x400.jpg"
-                    alt="User 1"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
-                  />
-                  <img
-                    src="https://i.pinimg.com/1200x/2c/36/44/2c364466678be55dfacfe65c673844c1.jpg"
-                    alt="User 2"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
-                  />
-                  <img
-                    src="https://i.pinimg.com/1200x/0b/89/b5/0b89b5c2804c1c4dd5b82a4d2c7a1396.jpg"
-                    alt="User 3"
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
-                  />
-              
-                </div>
+              {!isScrolled && (
+                <div className="flex flex-row gap-2 w-fit">
+                  {/* Profile Avatars */}
+                  <div className="flex -space-x-2">
+                    <img
+                      src="https://pbs.twimg.com/profile_images/1952423493879894017/M6tZ4PC0_400x400.jpg"
+                      alt="User 1"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
+                    />
+                    <img
+                      src="https://i.pinimg.com/1200x/2c/36/44/2c364466678be55dfacfe65c673844c1.jpg"
+                      alt="User 2"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
+                    />
+                    <img
+                      src="https://i.pinimg.com/1200x/0b/89/b5/0b89b5c2804c1c4dd5b82a4d2c7a1396.jpg"
+                      alt="User 3"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-white dark:border-zinc-800"
+                    />
 
-                {/* Text */}
-                <span className="text-xs sm:text-base italic h-fit my-auto text-zinc-700 dark:text-zinc-300 font-normal">
-                  110+ creatives on it! 
-                </span>
-              </div>
-            )}
+                  </div>
+
+                  {/* Text */}
+                  <span className="text-xs sm:text-base italic h-fit my-auto text-zinc-700 dark:text-zinc-300 font-normal">
+                    110+ creatives on it!
+                  </span>
+                </div>
+              )}
             </p>
 
-      
+
           </div>
 
           {/* Desktop Action Buttons */}
@@ -168,7 +173,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                     variant="ghost"
                     size="icon"
                     className="w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12 rounded-2xl border border-border cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
-                    >
+                  >
                     <Avatar className="h-6 w-6 rounded-xl">
                       <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
                       <AvatarFallback className="rounded-full">
@@ -207,91 +212,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             )}
           </div>
 
-          {/* Mobile Menu */}
-          <div className="md:hidden flex items-center flex-shrink-0 absolute top-2 right-2 z-50">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl border border-transparent text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 dark:bg-zinc-800 transition-all duration-200"
-                  onClick={onMobileSidebarToggle}
-                >
-                  <Menu className="h-4 w-4" />
-                </Button>
-              </PopoverTrigger>
 
-              <PopoverContent
-                align="end"
-                sideOffset={8}
-                className="w-auto rounded-2xl p-3 bg-zinc-100 dark:bg-zinc-800 flex flex-wrap gap-2 justify-end"
-              >
-                <Button
-                  size="icon"
-                  className="w-10 h-10 rounded-xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900 hover:bg-gradient-to-r hover:from-purple-500/30 hover:to-blue-500/30 shadow-sm transition-all duration-200"
-                  onClick={() => (!user ? setLoginModalOpen(true) : setCreateModalOpen(true))}
-                >
-                  <Plus className="size-4 dark:text-zinc-900" />
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="w-10 h-10 rounded-xl border border-transparent cursor-pointer text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
-                  onClick={() => (!user ? setLoginModalOpen(true) : setReelsModalOpen(true))}
-                >
-                  <SquarePlay className="size-4" />
-                </Button>
-
-                <ThemeToggle />
-
-                {user ? (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="w-10 h-10 rounded-xl border border-transparent text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
-                      >
-                        <Avatar className="h-6 w-6 rounded-xl">
-                          <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
-                          <AvatarFallback className="rounded-full">
-                            {user.email?.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-56 rounded-2xl bg-zinc-100 dark:bg-zinc-800">
-                      <div className="space-y-2">
-                        <div className="px-2 py-1.5">
-                          <p className="text-sm font-medium">{user.user_metadata?.full_name || user.email}</p>
-                          <p className="text-xs text-muted-foreground">{user.email}</p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-full justify-start rounded-xl hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20"
-                          onClick={() => signOut()}
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Sign out
-                        </Button>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-10 h-10 rounded-xl border border-transparent text-zinc-500 hover:text-zinc-500 dark:text-zinc-400 bg-zinc-100 hover:bg-gradient-to-r hover:from-purple-500/20 hover:to-blue-500/20 dark:bg-zinc-800 dark:hover:bg-muted transition-all duration-200"
-                    onClick={() => setLoginModalOpen(true)}
-                  >
-                    <User className="h-4 w-4" />
-                  </Button>
-                )}
-              </PopoverContent>
-            </Popover>
-          </div>
         </div>
 
         {/* Notice Banner */}
@@ -299,9 +220,21 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
           message="New: Live preview feature 👀 - see your code, edit & see it in action!!"
           variant="info"
         />
+
       </header>
 
+      {/* Mobile Menu */}
+      <div className="md:hidden bottom  flex items-center flex-shrink-0 fixed bottom-[100px] right-[30px] z-50">
+        <Button
+          size="icon"
+          className="w-10 h-10 rounded-xl cursor-pointer dark:bg-zinc-50 dark:text-zinc-900 hover:bg-gradient-to-r hover:from-purple-500/30 hover:to-blue-500/30 shadow-sm transition-all duration-200"
+          onClick={() => (!user ? setLoginModalOpen(true) : setCreateModalOpen(true))}
+        >
+          <Plus className="size-4 dark:text-zinc-900" />
+        </Button>
 
+
+      </div>
       <CreatePinModal open={createModalOpen} onOpenChange={setCreateModalOpen} />
       <ReelsModal open={reelsModalOpen} onOpenChange={setReelsModalOpen} />
       <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
