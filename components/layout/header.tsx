@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { User, Plus, LogOut, SquarePlay } from "lucide-react"
+import { User, Plus, LogOut, SquarePlay, Github } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useSidebar } from "@/components/board/boards-sidebar"
 import { CreatePinModal } from "@/components/pin/create-pin-modal"
@@ -15,6 +15,7 @@ import { useLoadingState } from "@/hooks/use-loading"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { SearchBoxBar } from "@/components/search-bar-box"
 import { FiltersBar } from "@/components/filters-bar"
+import Link from "next/link"
 
 interface HeaderProps {
   onMobileSidebarToggle: () => void
@@ -108,10 +109,10 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             ? "bg-zinc-100/20 dark:bg-zinc-800/20 m-0 p-0 backdrop-blur-lg rounded-br-3xl rounded-bl-3xl"
             : "bg-zinc-300/30 dark:bg-black m-2 sm:m-3 md:m-4 rounded-3xl"
           } backdrop-blur-md`}
-          style={{
-            backgroundImage: `url("https://www.transparenttextures.com/patterns/cartographer.png")`,
-            backgroundRepeat: "repeat",
-           }}
+        style={{
+          backgroundImage: `url("https://www.transparenttextures.com/patterns/cartographer.png")`,
+          backgroundRepeat: "repeat",
+        }}
       >
         <div
           className={`container mx-auto transition-all duration-300 ease-in-out flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-3 md:gap-4 max-w-full px-2 sm:px-3 md:px-4 ${isScrolled ? "py-2 sm:py-2.5 bg-background/70 backdrop-blur-md" : "py-3 sm:py-4"
@@ -143,8 +144,8 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             <SearchBoxBar sort={sort} onSortChange={onSortChange} isScrolled={isScrolled} />
 
             <div className={`z-50 transition-all ${isScrolled ? "block" : "block"}`}>
-              <div className={`${isScrolled?"mx-0":"mx-auto"}  w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%]`}>
-                <div className={`${isScrolled ? "mt-12":"mt-2"} pt-2`}>
+              <div className={`${isScrolled ? "mx-0" : "mx-auto"}  w-[95%] sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[70%]`}>
+                <div className={`${isScrolled ? "mt-12" : "mt-2"} pt-2`}>
                   <FiltersBar selectedTags={selectedTags} onTagToggle={handleTagToggle} onClearAll={handleClearAll} />
                 </div>
               </div>
@@ -190,6 +191,17 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
             className={`hidden md:flex z-50 items-center gap-2 sm:gap-3 flex-shrink-0 transition-all duration-300 ${isScrolled ? "absolute top-2 right-2" : "absolute right-4 sm:right-6 top-3 sm:top-4"
               }`}
           >
+            <Link href="https://github.com/vvc10/pinstack">
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`${isScrolled? "w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12":" h-10 sm:h-11 md:h-12 w-fit sm:w-fit md:w-fit"} px-3 rounded-2xl border border-border cursor-pointer text-zinc-200 dark:text-zinc-200 bg-zinc-800 hover:bg-zinc-900 dark:bg-zinc-950 dark:hover:bg-zinc-900/50 transition-all duration-200`}
+
+              >
+               <p className={`${isScrolled? "hidden":"block"}`}> Star on</p>
+                <Github className="size-4" />
+              </Button>
+            </Link>
             <Button
               size="icon"
               className="w-10 sm:w-11 md:w-12 h-10 sm:h-11 md:h-12 rounded-2xl cursor-pointer text-zinc-200 dark:text-zinc-200 bg-zinc-800 hover:bg-zinc-900 dark:bg-zinc-200 dark:hover:bg-zinc-300 transition-all duration-200"
@@ -257,6 +269,9 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
                 <User className="h-4 w-4" />
               </Button>
             )}
+
+
+
           </div>
         </div>
 
