@@ -104,16 +104,14 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${isCollapsed ? "md:left-16" : "md:left-64"
+        className={`fixed top-0 left-0 right-0 z-50 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950 transition-all duration-300 ease-in-out ${isCollapsed ? "md:left-16" : "md:left-64"
           } ${isScrolled
             ? "bg-zinc-100/20 dark:bg-zinc-800/20 m-0 p-0 backdrop-blur-lg rounded-br-3xl rounded-bl-3xl"
             : "bg-zinc-300/30 dark:bg-black m-2 sm:m-3 md:m-4 rounded-3xl"
           } backdrop-blur-md`}
-        style={{
-          backgroundImage: `url("https://www.transparenttextures.com/patterns/cartographer.png")`,
-          backgroundRepeat: "repeat",
-        }}
+   
       >
+        
         <div
           className={`container mx-auto transition-all duration-300 ease-in-out flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-3 md:gap-4 max-w-full px-2 sm:px-3 md:px-4 ${isScrolled ? "py-2 sm:py-2.5 bg-background/70 backdrop-blur-md" : "py-3 sm:py-4"
             }`}
@@ -130,7 +128,7 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
               className={`text-3xl text-center sm:text-4xl md:text-5xl font-semibold font-poppins tracking-tight mb-3 ${isScrolled ? "hidden" : "block"
                 }`}
             >
-              Beautiful UI Components, <span className="text-zinc-100  px-3 py-1 font-medium rounded-2xl bg-primary">Ready to Copy.</span>
+              Beautiful UI Components, <span className="  px-3 py-1 rounded-2xl bg-primary/0">Ready to Copy.</span>
             </h2>
             <p
               className={`text-zinc-600 dark:text-zinc-300 text-center w-[90%] md:w-[60%] mx-auto text-xs sm:text-base md:text-lg leading-relaxed ${isScrolled ? "hidden" : "block"
