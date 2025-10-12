@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, ReactNode } from "react"
+import { useState, ReactNode, useEffect } from "react"
 import { BoardsSidebar, SidebarProvider, useSidebar } from "@/components/board/boards-sidebar"
 import { Header } from "./header"
 import { MobileBottomNav } from "./mobile-bottom-nav"
 import { useNoticeBanner } from "@/contexts/notice-banner-context"
 import { LoadingProvider } from "@/contexts/loading-context"
 import { UniversalLoader } from "@/components/ui/universal-loader"
+import { usePathname } from "next/navigation"
 
 interface AppLayoutProps {
   children: ReactNode
@@ -19,6 +20,8 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const { isCollapsed } = useSidebar()
   const { isVisible: isNoticeBannerVisible } = useNoticeBanner()
+  const pathname = usePathname()
+  const isHomePage = pathname === "/" || pathname === "/home"
 
   return (
     <main className="min-h-dvh flex flex-col overflow-x-hidden transition-all duration-300 ease-in-out">
@@ -51,9 +54,11 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
             >
               <div
                 className={`pb-20 md:pb-0 transition-all duration-300 
-    ${isNoticeBannerVisible
-                    ? 'mt-[40rem] sm:mt-[32rem] md:mt-[40rem] lg:mt-[38rem] xl:mt-[30rem]'
-                    : 'mt-[28rem] sm:mt-[30rem] md:mt-[37rem] lg:mt-[36rem] xl:mt-[28rem]'
+    ${isHomePage 
+                    ? (isNoticeBannerVisible
+                        ? 'mt-[40rem] sm:mt-[32rem] md:mt-[40rem] lg:mt-[38rem] xl:mt-[30rem]'
+                        : 'mt-[28rem] sm:mt-[30rem] md:mt-[37rem] lg:mt-[36rem] xl:mt-[28rem]')
+                    : 'mt-[8rem] sm:mt-[8rem] md:mt-[8rem] lg:mt-[8rem] xl:mt-[8rem]'
                   }`}
               >
                 {children}

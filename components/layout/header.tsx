@@ -40,16 +40,21 @@ export function Header({ onMobileSidebarToggle, sort = "trending", onSortChange 
   // Handle case where searchParams might not be available during SSR
   const safeSearchParams = searchParams || new URLSearchParams()
 
-  // Track scroll position
+  // Track scroll position and check route for compact header
   useEffect(() => {
     const handleScroll = () => {
       const scrollThreshold = 200 // Reduced threshold for quicker response
       setIsScrolled(window.scrollY > scrollThreshold)
     }
 
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+    // Force compact header for routes other than "/" and "/home"
+    if (pathname !== "/" && pathname !== "/home") {
+      setIsScrolled(true)
+    } else {
+      window.addEventListener("scroll", handleScroll)
+      return () => window.removeEventListener("scroll", handleScroll)
+    }
+  }, [pathname])
 
   useEffect(() => {
     setMounted(true)
