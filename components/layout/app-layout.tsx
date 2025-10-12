@@ -22,44 +22,48 @@ function AppLayoutContent({ children, currentTab = "home", sort, onSortChange }:
 
   return (
     <main className="min-h-dvh flex flex-col overflow-x-hidden transition-all duration-300 ease-in-out">
-      <Header 
-        onMobileSidebarToggle={() => setIsMobileSidebarOpen(true)} 
+      <Header
+        onMobileSidebarToggle={() => setIsMobileSidebarOpen(true)}
         sort={sort}
         onSortChange={onSortChange}
       />
-      
+
       <section className="md:block container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 max-w-full">
         <div className="grid grid-cols-1 gap-4 sm:gap-6">
           {/* Desktop Sidebar - Fixed */}
           <div className="hidden md:block">
             <BoardsSidebar currentTab={currentTab} />
           </div>
-          
+
           {/* Mobile Sidebar */}
-          <BoardsSidebar 
+          <BoardsSidebar
             isMobileOpen={isMobileSidebarOpen}
             onMobileClose={() => setIsMobileSidebarOpen(false)}
             currentTab={currentTab}
           />
-          
+
           {/* Main Content with Dynamic Sidebar Offset */}
-          <div className={`transition-all duration-300 ease-in-out ${
-            isCollapsed ? 'md:ml-16' : 'md:ml-64'
-          }`}>
-            <div 
+          <div className={`transition-all duration-300 ease-in-out ${isCollapsed ? 'md:ml-16' : 'md:ml-64'
+            }`}>
+            <div
               className="transition-all duration-300 ease-in-out"
-              style={{
-                paddingTop: isNoticeBannerVisible ? '5rem' : '26rem'
-              }}
+
             >
-              <div className="mt-24 sm:mt-10 md:mt-2 pb-20 md:pb-0">
+              <div
+                className={`pb-20 md:pb-0 transition-all duration-300 
+    ${isNoticeBannerVisible
+                    ? 'mt-[40rem] sm:mt-[32rem] md:mt-[40rem] lg:mt-[38rem] xl:mt-[30rem]'
+                    : 'mt-[28rem] sm:mt-[30rem] md:mt-[37rem] lg:mt-[36rem] xl:mt-[28rem]'
+                  }`}
+              >
                 {children}
               </div>
+
             </div>
           </div>
         </div>
       </section>
-      
+
       {/* Mobile Bottom Navigation */}
       <MobileBottomNav currentTab={currentTab} />
     </main>

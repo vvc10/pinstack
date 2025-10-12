@@ -56,6 +56,11 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <CardHeader className="text-center">
+                                <div className="flex justify-center mb-4">
+                                    <div className="h-14 w-14 font-garamond rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+                                        <span className="text-primary-foreground font-bold text-2xl">Ps.</span>
+                                    </div>
+                                </div>
                                 <CardTitle className="text-3xl font-bold text-foreground">Welcome to pinstack</CardTitle>
                                 <CardDescription className="text-lg">
                                     Sign in to create, save, and share your favorite code snippets

@@ -43,6 +43,11 @@ function SignUpForm() {
       <div className="relative z-10 w-full max-w-md">
       <Card className="w-full backdrop-blur supports-[backdrop-filter]:bg-background/70 rounded-3xl">
       <CardHeader className="text-center">
+            <div className="flex justify-center mb-4">
+              <div className="h-12 w-12 font-garamond rounded-xl bg-primary flex items-center justify-center flex-shrink-0">
+                <span className="text-primary-foreground font-bold text-2xl">Ps.</span>
+              </div>
+            </div>
             <CardTitle className="text-2xl font-bold text-foreground">Create your pinstack account</CardTitle>
             <CardDescription>
               Continue with Google to get started
